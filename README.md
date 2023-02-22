@@ -8,7 +8,7 @@ faker_persons_ru
 Описание проекта
 ----------------
 
-![](/home/nobus/GitHub/faker_persons_ru/image/faker_persons_ru.png)
+![](/image/faker_persons_ru.png)
 
 Проект не является заменой [faker](https://faker.readthedocs.io). Он призван генерировать массив *правдоподобной* и *качественной* персональной информации.
 
