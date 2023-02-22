@@ -44,13 +44,13 @@ faker_persons_ru
 
 ## Примеры использования программы:
 
-1. `faker_persons_ru` &mdash; генерация и частичный вывод на экран массива из 1000 записей;
+1. `faker_persons_ru` &mdash; генерация и частичный вывод на экран массива из `1000` записей;
 
-2. `faker_persons_ru --total 100` &mdash; генерация и частичный вывод на экран 100 записей;
+2. `faker_persons_ru --total 100` &mdash; генерация и частичный вывод на экран `100` записей;
 
-3. `faker_persons_ru -total 5000 --output my_dataset --fyle-type csv` &mdash; генерация и частичный вывод на экран 10000 записей с сохранением массива данных в файл `my_dataset.csv` в домашней папке пользователя;
+3. `faker_persons_ru -total 5000 --output my_dataset --fyle-type csv` &mdash; генерация и частичный вывод на экран `10000` записей с сохранением массива данных в файл `my_dataset.csv` в домашней папке пользователя;
 
-4. `faker_persons_ru -t 10000 -o 'big dataset' -f csv -f sqlite3` &mdash; генерация и частичный вывод на экран 10000 записей с сохранением массива данных в файлы `big dataset.csv` и `big dataset.sqlite3` в домашней папке пользователя;
+4. `faker_persons_ru -t 10000 -o 'big dataset' -f csv -f sqlite3` &mdash; генерация и частичный вывод на экран `10000` записей с сохранением массива данных в файлы `big dataset.csv` и `big dataset.sqlite3` в домашней папке пользователя;
 
 5. `faker_persons_ru --help` &mdash; вывод на экран справочной информации.
 
