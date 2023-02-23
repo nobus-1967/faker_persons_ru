@@ -59,7 +59,9 @@ Author/Автор программы: Anatoly Shcherbina/Анатолий Щер
 
 Email: [avshcherbina@gmail.com](mailto:avshcherbina@gmail.com)
 
-Version/Версия программы: `0.1.0`
+Version/Версия программы: `0.2.1`
+
+Changelog/Изменения: [CHANGES.md](CHANGES.md)
 
 License/Лицензия: `MIT`
 

@@ -2,7 +2,7 @@
 """
 Main module for:
 - set options through CLI,
-- create resulting DataFrames of fake persons and contacts and
+- create resulting DataFrames of fake Russian personal data and contacts, and
 - save data into different formats (CSV, SQL, MS Excel) in user home directory.
 """
 import click
@@ -12,6 +12,7 @@ from pathlib import Path
 
 import modules.datasets
 import modules.outputs
+import __version__
 
 PATH_TO_OUTPUT: Path = Path.home()
 PERSONS: tuple[str, str, str, str, str] = (
@@ -53,10 +54,10 @@ def main(total: int, filetype: str, output: str) -> None:
     """faker_persons_ru (version 0.2.0, use Click and pandas):
 
     - Generate datasets of fake Russian personal data and store them.
-    
+
     - Create pandas DataFrames  and store it as CSV, SQL, SQLite3 and Microsoft
     Excel files in users home directory.
-    
+
     - Echo parts of DataFrames (and--if user entered filetype(s)--also echo
     results of storing files).
     """
@@ -98,6 +99,12 @@ def main(total: int, filetype: str, output: str) -> None:
             f'Dataset "{output}.{filetype}" ({total} personal data records) '
             + f'was successfully stored in your "{PATH_TO_OUTPUT}" directory.'
         )
+
+    click.echo(
+        '----------------------------\n'
+        + f'(c) Anatoly Shcherbina, 2023\n'
+        + f'faker_persons_ru, ver. {__version__.__version__}'
+    )
 
 
 if __name__ == '__main__':
