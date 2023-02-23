@@ -51,7 +51,7 @@ CONTACTS: tuple[str, str] = ('Телефон', 'E-mail')
     help="Output FILENAME, no extension required (default 'new_dataset').",
 )
 def main(total: int, filetype: str, output: str) -> None:
-    """faker_persons_ru (version 0.2.0, use Click and pandas):
+    """faker_persons_ru (using Click and pandas):
 
     - Generate datasets of fake Russian personal data and store them.
 
