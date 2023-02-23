@@ -53,13 +53,14 @@ def generate_sql(
     """Generate Common SQL file (tables: 'persons', 'contacts').
 
     Args:
-        df_persons: pandas DataFrame with fake persons (name, sex,
+        df_persons: pandas DataFrame - fake persons (name, sex,
         date of birth).
-        df_contacts: pandas DataFrame with fake contacts (phones, emails).
-        output: string for file name (without extension).
-        path: PosixPath for home directory of user.
+        df_contacts: pandas DataFrame - fake contacts (phones, emails).
+        output: string - file name (without extension).
+        path: PosixPath - user home directory.
 
     Notes:
+        save DataFrames as common SQL file (may be imported into RDBMS).
         use generic data types (TEXT for strings, DATE for dates).
     """
     filename = output + '.sql'
@@ -94,13 +95,14 @@ def generate_sqlite3(
     """Generate SQLite3 file (tables: 'persons', 'contacts').
 
     Args:
-        df_persons: pandas DataFrame with fake persons (name, sex,
+        df_persons: pandas DataFrame - fake persons (name, sex,
         date of birth).
-        df_contacts: pandas DataFrame with fake contacts (phones, emails).
-        output: string for file name (without extension).
-        path: PosixPath for home directory of user.
+        df_contacts: pandas DataFrame - fake contacts (phones, emails).
+        output: string - file name (without extension).
+        path: PosixPath - user home directory.
 
     Notes:
+        save DataFrames as SQLite3 database file.
         use generic data types (TEXT for strings, DATE for dates).
     """
     filename = output + '.sqlite3'
@@ -134,12 +136,13 @@ def generate_csv(df_full: pd.DataFrame, output: str, path: Path) -> None:
     """Generate comma-separated values (CSV) file.
 
     Args:
-        df_full: pandas DataFrame with fake persons & their contacts (name,
+        df_full: pandas DataFrame - fake persons & their contacts (name,
         sex, date of birth, phones, emails).
-        output: string for file name (without extension).
-        path: PosixPath for home directory of user.
+        output: string - file name (without extension).
+        path: PosixPath - user home directory.
 
     Notes:
+        save DataFrames as comma-separated values (CSV) file.
         uses a comma (',') to separate values.
     """
     filename = output + '.csv'
@@ -152,12 +155,13 @@ def generate_excel(df_full: pd.DataFrame, output: str, path: Path) -> None:
     """Generate Microsoft Excel Spreadsheet (XLSX file).
 
     Args:
-        df_full: pandas DataFrame with fake persons & their contacts (name,
+        df_full: pandas DataFrame - fake persons & their contacts (name,
         sex, date of birth, phones, emails).
-        output: string for file name (without extension).
-        path: PosixPath for home directory of user.
+        output: string - file name (without extension).
+        path: PosixPath - user home directory.
 
     Notes:
+        save DataFrames as Microsoft Excel spreadsheet.
         uses XLSX file format (Microsoft Excel 2007 and later).
     """
     filename = output + '.xlsx'

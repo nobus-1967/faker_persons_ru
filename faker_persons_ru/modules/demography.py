@@ -1,6 +1,7 @@
-"""Module for generating age and sex values."""
+"""Module for generating age and sex values for fake Russian datasets."""
 import datetime
 import random
+
 from collections import namedtuple
 from dataclasses import dataclass
 
@@ -16,7 +17,11 @@ class Age:
     female: float
 
     def generate_birthday(self) -> str:
-        """Return random birthday for the age."""
+        """Generate random birthday for the age.
+
+        Returns:
+            string from datetime containing date of birth (YYYY-MM-DD).
+        """
         start_date = datetime.datetime(self.start_year, 1, 1)
         end_date = datetime.datetime(self.end_year, 12, 31)
         random_timestamp = random.randint(
@@ -31,13 +36,13 @@ Sex = namedtuple('Sex', ['male', 'female'])
 
 
 def calc_ages(total: int) -> tuple[int, int, int]:
-    """Calculate total persons of each age.
+    """Calculate amounts of persons of each age.
 
     Args:
-        total: integer of total persons from user input.
+        total: integer - total amount of persons from user input.
 
     Returns:
-        list of lists (containing strings) with fake personal info.
+        tuple of integers represents amounts of persons of a certain age.
     """
     total_j, total_m, total_s = 0, 0, 0
 
@@ -64,11 +69,11 @@ def calc_sex(total_age: int, female_age: float) -> tuple[int, int]:
     """Calculate total persons of each sex.
 
     Args:
-        total_age: integer of total persons for the age.
+        total_age: integer - amount of persons for a certain age.
         female_age: float of females' percent in the ages.
 
     Returns:
-        A tuple of integers represents amounts of male/female persons.
+        A tuple of integers - amounts of male/female persons.
     """
     male, female = 0, 0
 

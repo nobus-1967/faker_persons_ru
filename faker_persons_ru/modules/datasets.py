@@ -1,114 +1,127 @@
-"""Module for generating basic dataset (fake persons and their contacts)."""
+"""Module for generating datasets (fake Russian personal data and contacts)."""
 import random
 
-from modules.demography import Age, JUNIOR, MIDDLE, SENIOR, SEX
-from modules.demography import calc_ages, calc_sex
-from modules.emails import generate_emails
-from modules.names import read_names
-from modules.phones import generate_phones
+from pathlib import Path
+
+import modules.demography
+import modules.emails
+import modules.names
+import modules.phones
 
 
 def generate_persons(total: int) -> list[list[str]]:
-    """Generate a dataset of fake persons (name, sex, date of birth).
+    """Generate a dataset of fake Russian data (name, sex, date of birth).
 
     Args:
-        total: integer of total persons from user input.
+        total: integer - total amount of persons from user input.
 
     Returns:
-        list of lists (containing strings) with fake personal info.
+        list of lists (containing strings) with fake Russian personal data.
     """
     # 1. Calculate age and sex values.
-    total_j, total_m, total_s = calc_ages(total)
-    total_male_j, total_female_j = calc_sex(total_j, JUNIOR.female)
-    total_male_m, total_female_m = calc_sex(total_m, MIDDLE.female)
-    total_male_s, total_female_s = calc_sex(total_s, SENIOR.female)
+    total_j, total_m, total_s = modules.demography.calc_ages(total)
+    total_male_j, total_female_j = modules.demography.calc_sex(
+        total_j, modules.demography.JUNIOR.female
+    )
+    total_male_m, total_female_m = modules.demography.calc_sex(
+        total_m, modules.demography.MIDDLE.female
+    )
+    total_male_s, total_female_s = modules.demography.calc_sex(
+        total_s, modules.demography.SENIOR.female
+    )
     total_male = total_male_j + total_male_m + total_male_s
     total_female = total_female_j + total_female_m + total_female_s
 
     # 2. Create lists of names.
-    lastnames_male = read_names(total_male, 'sources/lastnames_male.csv')
-    lastnames_female = read_names(total_female, 'sources/lastnames_female.csv')
-    firstnames_male_j = read_names(
-        total_male_j, 'sources/firstnames_junior_male.csv'
+    data = Path.cwd().joinpath('data')
+
+    lastnames_male = modules.names.read_names(
+        total_male, data.joinpath('lastnames_male.csv')
     )
-    firstnames_female_j = read_names(
-        total_female_j, 'sources/firstnames_junior_female.csv'
+    lastnames_female = modules.names.read_names(
+        total_female, data.joinpath('lastnames_female.csv')
     )
-    firstnames_male_m = read_names(
-        total_male_m, 'sources/firstnames_middle_male.csv'
+    firstnames_male_j = modules.names.read_names(
+        total_male_j, data.joinpath('firstnames_junior_male.csv')
     )
-    firstnames_female_m = read_names(
-        total_female_m, 'sources/firstnames_middle_female.csv'
+    firstnames_female_j = modules.names.read_names(
+        total_female_j, data.joinpath('firstnames_junior_female.csv')
     )
-    firstnames_male_s = read_names(
-        total_male_s, 'sources/firstnames_senior_male.csv'
+    firstnames_male_m = modules.names.read_names(
+        total_male_m, data.joinpath('firstnames_middle_male.csv')
     )
-    firstnames_female_s = read_names(
-        total_female_s, 'sources/firstnames_senior_female.csv'
+    firstnames_female_m = modules.names.read_names(
+        total_female_m, data.joinpath('firstnames_middle_female.csv')
     )
-    patronymics_male_j = read_names(
-        total_male_j, 'sources/patronymics_junior_male.csv'
+    firstnames_male_s = modules.names.read_names(
+        total_male_s, data.joinpath('firstnames_senior_male.csv')
     )
-    patronymics_female_j = read_names(
-        total_female_j, 'sources/patronymics_junior_female.csv'
+    firstnames_female_s = modules.names.read_names(
+        total_female_s, data.joinpath('firstnames_senior_female.csv')
     )
-    patronymics_male_m = read_names(
-        total_male_m, 'sources/patronymics_middle_male.csv'
+    patronymics_male_j = modules.names.read_names(
+        total_male_j, data.joinpath('patronymics_junior_male.csv')
     )
-    patronymics_female_m = read_names(
-        total_female_m, 'sources/patronymics_middle_female.csv'
+    patronymics_female_j = modules.names.read_names(
+        total_female_j, data.joinpath('patronymics_junior_female.csv')
     )
-    patronymics_male_s = read_names(
-        total_male_s, 'sources/patronymics_senior_male.csv'
+    patronymics_male_m = modules.names.read_names(
+        total_male_m, data.joinpath('patronymics_middle_male.csv')
     )
-    patronymics_female_s = read_names(
-        total_female_s, 'sources/patronymics_senior_female.csv'
+    patronymics_female_m = modules.names.read_names(
+        total_female_m, data.joinpath('patronymics_middle_female.csv')
+    )
+    patronymics_male_s = modules.names.read_names(
+        total_male_s, data.joinpath('patronymics_senior_male.csv')
+    )
+    patronymics_female_s = modules.names.read_names(
+        total_female_s, data.joinpath('patronymics_senior_female.csv')
     )
 
     # 3. Generate dataset.
     dataset_male_j = generate_data(
-        JUNIOR,
-        SEX.male,
+        modules.demography.JUNIOR,
+        modules.demography.SEX.male,
         total_male_j,
         lastnames_male,
         firstnames_male_j,
         patronymics_male_j,
     )
     dataset_female_j = generate_data(
-        JUNIOR,
-        SEX.female,
+        modules.demography.JUNIOR,
+        modules.demography.SEX.female,
         total_female_j,
         lastnames_female,
         firstnames_female_j,
         patronymics_female_j,
     )
     dataset_male_m = generate_data(
-        MIDDLE,
-        SEX.male,
+        modules.demography.MIDDLE,
+        modules.demography.SEX.male,
         total_male_m,
         lastnames_male,
         firstnames_male_m,
         patronymics_male_m,
     )
     dataset_female_m = generate_data(
-        MIDDLE,
-        SEX.female,
+        modules.demography.MIDDLE,
+        modules.demography.SEX.female,
         total_female_m,
         lastnames_female,
         firstnames_female_m,
         patronymics_female_m,
     )
     dataset_male_s = generate_data(
-        SENIOR,
-        SEX.male,
+        modules.demography.SENIOR,
+        modules.demography.SEX.male,
         total_male_s,
         lastnames_male,
         firstnames_male_s,
         patronymics_male_s,
     )
     dataset_female_s = generate_data(
-        SENIOR,
-        SEX.female,
+        modules.demography.SENIOR,
+        modules.demography.SEX.female,
         total_female_s,
         lastnames_female,
         firstnames_female_s,
@@ -129,30 +142,30 @@ def generate_persons(total: int) -> list[list[str]]:
 
 
 def generate_data(
-    age: Age,
+    age: modules.demography.Age,
     sex: str,
     total_sex_age: int,
     lastnames: list[str],
     firstnames: list[str],
     patronymics: list[str],
 ) -> list[list[str]]:
-    """Generate fake persons of certain age (name, sex, date of birth).
+    """Generate fake Russian data for a certain age (name, sex, date of birth).
 
     Args:
-        age: object of dataclass for certain age.
-        sex: string as certain value of namedtuple.
-        total_sex_age: integer for an amount of male/female persons of certain
-        age.
-        lastnames: list of last names for male/female.
-        firstnames: list of first names of male/age of certain age.
-        patronymics: list of patronymics of male/age of certain age.
+        age: object - object of dataclass 'Age' (certain age).
+        sex: string - value from namedtuple 'Sex' (male/female).
+        total_sex_age: integer - amount of male/female persons of a certain age.
+        lastnames: list - Russian last names for male/female.
+        firstnames: list - Russian first names of male/age of a certain age.
+        patronymics: list - Russian patronymics of male/age of a certain age.
 
     Returns:
-        list of lists (containing strings) with fake personal of certain sex
-        and age.
+        list of lists (containing strings) with fake Russan personal data of
+        a certain sex and age.
     """
     persons = list()
-    birthdays = list()  # For a unique phone number check.
+    # For a unique birthday check: list of birthdays.
+    birthdays = list()
     totals = total_sex_age
 
     while totals > 0:
@@ -175,17 +188,18 @@ def generate_data(
 
 
 def generate_contacts(total: int, dataset_persons: list[list[str]]) -> zip:
-    """Generate a dataset of fake contacts (phone, email).
+    """Generate a dataset of fake Russian contacts (cell phone numbers, emails).
 
     Args:
-        total: integer of total persons from user input.
-        dataset_persons: list of lists (containing strings) with fake personal info.
+        total: integer - total amount of persons from user input.
+        dataset_persons: list of lists (containing strings) - fake Russian
+        personal data.
 
     Returns:
-        list of lists (containing strings) with fake phones and emails.
+        zip of lists (containing strings) with fake Russian phones and emails.
     """
-    phones = generate_phones(total)
-    emails = generate_emails(dataset_persons)
+    phones = modules.phones.generate_phones(total)
+    emails = modules.emails.generate_emails(dataset_persons)
 
     dataset_contacts = zip(phones, emails)
 

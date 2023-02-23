@@ -1,4 +1,4 @@
-"""Module for generating fake phones."""
+"""Module for generating fake Russian cell phone numbers."""
 import random
 
 CODES = [907, 935, 943, 944, 945, 946, 947, 948, 972, 973, 974, 975, 976]
@@ -11,7 +11,7 @@ def generate_phones(total: int) -> list[str]:
         total: integer of total persons from user input.
 
     Returns:
-        list of fake cell phones.
+        list of fake Russian cell phone numbers.
     """
     phones = list()
     phones_nums = [num for num in range(1110011, 9990100)]

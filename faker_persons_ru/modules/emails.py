@@ -1,4 +1,4 @@
-"""Module for generating fake emails based on fake names."""
+"""Module for generating fake Russian emails based on fake Russian names."""
 import random
 
 TRANSLIT = {
@@ -109,13 +109,14 @@ DOMAINS = [
 
 
 def generate_emails(dataset_persons: list[list[str]]) -> list[str]:
-    """Generate a dataset of fake emails.
+    """Generate a dataset of fake Russian emails.
 
     Args:
-        dataset_persons: list of lists (containing strings) with fake personal info.
+        dataset_persons: list of lists (containing strings) - fake Russian
+        personal info.
 
     Returns:
-        list of fake emails.
+        list of strings containings fake Russian emails.
     """
     emails = list()
 
@@ -137,13 +138,13 @@ def generate_emails(dataset_persons: list[list[str]]) -> list[str]:
 
 
 def transliterate_login(ru_login: str) -> str:
-    """Generate email login for fake name.
+    """Generate email login for fake Russian name.
 
     Args:
-        ru_login: string for login in Russian.
+        ru_login: string - login in Russian.
 
     Returns:
-        en_login as transliterated string.
+        en_login as transliterated string for generating personal email address.
     """
     en_login = ''
 
@@ -163,7 +164,7 @@ def generate_login(lastname: str, firstname: str, year: str, var: int) -> str:
         var: integer for a pattern of email address.
 
     Returns:
-        string as fake email address.
+        string as fake Russian personal email address.
     """
     pattern = PATTERNS[var]
     domain = random.choice(DOMAINS)

@@ -2,9 +2,11 @@
 import random
 import csv
 
+from pathlib import Path
 
-def read_names(total: int, filename: str) -> list[str]:
-    """Create lists of first names, lastnames and patronymics
+
+def read_names(total: int, filepath: Path) -> list[str]:
+    """Create lists of first names, last names and patronymics
     based on their weights (frequency of use).
 
     Args:
@@ -17,12 +19,12 @@ def read_names(total: int, filename: str) -> list[str]:
     names = list()
     weights = list()
 
-    with open(filename, newline='') as csvfile:
-        data_reader = csv.reader(
+    with open(filepath, newline='') as csvfile:
+        csv_reader = csv.reader(
             csvfile, delimiter=',', quoting=csv.QUOTE_NONNUMERIC
         )
 
-        for i, data in enumerate(data_reader):
+        for i, data in enumerate(csv_reader):
             names.append(data[0])
             weights.append(data[1])
 

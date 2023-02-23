@@ -2,24 +2,18 @@
 """
 Main module for:
 - set options through CLI,
-- create resulting dataframes of fake persons and contacts and
-- save results into files of different formats (CSV, SQL, MS Excel) in user
-home directory.
+- create resulting DataFrames of fake persons and contacts and
+- save data into different formats (CSV, SQL, MS Excel) in user home directory.
 """
 import click
 import pandas as pd
 
 from pathlib import Path
 
-from modules.datasets import generate_persons, generate_contacts
-from modules.outputs import (
-    generate_csv,
-    generate_sql,
-    generate_sqlite3,
-    generate_excel,
-)
+import modules.datasets
+import modules.outputs
 
-PATH: Path = Path.home()
+PATH_TO_OUTPUT: Path = Path.home()
 PERSONS: tuple[str, str, str, str, str] = (
     'Фамилия',
     'Имя',
@@ -56,15 +50,27 @@ CONTACTS: tuple[str, str] = ('Телефон', 'E-mail')
     help="Output FILENAME, no extension required (default 'new_dataset').",
 )
 def main(total: int, filetype: str, output: str) -> None:
+    """faker_persons_ru (version 0.2.0, use Click and pandas):
+
+    - Generate datasets of fake Russian personal data and store them.
+    
+    - Create pandas DataFrames  and store it as CSV, SQL, SQLite3 and Microsoft
+    Excel files in users home directory.
+    
+    - Echo parts of DataFrames (and--if user entered filetype(s)--also echo
+    results of storing files).
+    """
     click.echo(
         f'Generating new dataset "{output}", waiting a few seconds...\n'
     )
 
-    dataset_persons = generate_persons(total)
+    dataset_persons = modules.datasets.generate_persons(total)
     indexes: pd.RangeIndex = pd.RangeIndex(start=1, stop=total + 1, name='ID')
     df_persons = pd.DataFrame(dataset_persons, columns=PERSONS, index=indexes)
 
-    dataset_contacts = generate_contacts(total, dataset_persons)
+    dataset_contacts = modules.datasets.generate_contacts(
+        total, dataset_persons
+    )
     df_contacts = pd.DataFrame(
         dataset_contacts, columns=CONTACTS, index=indexes
     )
@@ -73,20 +79,24 @@ def main(total: int, filetype: str, output: str) -> None:
     click.echo(df_full)
 
     if 'csv' in filetype:
-        generate_csv(df_full, output, PATH)
+        modules.outputs.generate_csv(df_full, output, PATH_TO_OUTPUT)
     if 'sql' in filetype:
-        generate_sql(df_persons, df_contacts, output, PATH)
+        modules.outputs.generate_sql(
+            df_persons, df_contacts, output, PATH_TO_OUTPUT
+        )
     if 'sqlite3' in filetype:
-        generate_sqlite3(df_persons, df_contacts, output, PATH)
+        modules.outputs.generate_sqlite3(
+            df_persons, df_contacts, output, PATH_TO_OUTPUT
+        )
     if 'xlsx' in filetype:
-        generate_excel(df_full, output, PATH)
+        modules.outputs.generate_excel(df_full, output, PATH_TO_OUTPUT)
 
     click.echo()
 
     for filetype in filetype:
         click.echo(
             f'Dataset "{output}.{filetype}" ({total} personal data records) '
-            + f'was successfully stored in your "{PATH}" directory.'
+            + f'was successfully stored in your "{PATH_TO_OUTPUT}" directory.'
         )
 
 
