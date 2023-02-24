@@ -1,5 +1,8 @@
 # CHANGES:
 
+## 0.3.0 (2023-02-24)
+- Third release: converted `csv` to dictionaries, corrected some lastnames, refactored module `names`, improved docstrings.
+
 ## 0.2.1 (2023-02-23)
 - Second release: added `__versions__.py`, improved docstrings.
 
