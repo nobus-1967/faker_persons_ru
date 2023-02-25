@@ -53,7 +53,7 @@
 
 ## Установка:
 
-[Релиз v0.3.1](https://github.com/nobus-1967/faker_persons_ru/releases/tag/0.3.1)
+[Релиз v0.4.0](https://github.com/nobus-1967/faker_persons_ru/releases/tag/0.4.0)
 
 ## Общая информация
 
@@ -63,7 +63,7 @@ Author/Автор программы: Anatoly Shcherbina/Анатолий Щер
 
 Email: [avshcherbina@gmail.com](mailto:avshcherbina@gmail.com)
 
-Version/Версия программы: `0.3.1`
+Version/Версия программы: `0.4.0`
 
 Changelog/Изменения: [CHANGES.md](CHANGES.md)
 

@@ -118,7 +118,7 @@ def generate_emails(dataset_persons: list[list[str]]) -> list[str]:
     Returns:
         list of strings containings fake Russian emails.
     """
-    emails = list()
+    emails = [None] * len(dataset_persons)
 
     for i, row in enumerate(dataset_persons):
         lastname = row[0]
@@ -132,7 +132,7 @@ def generate_emails(dataset_persons: list[list[str]]) -> list[str]:
             var += 1
             email = generate_login(lastname, firstname, year, var)
 
-        emails.append(email)
+        emails[i] = email
 
     return emails
 

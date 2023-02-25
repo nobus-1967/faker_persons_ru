@@ -35,12 +35,32 @@ def generate_persons(total: int) -> list[list[str]]:
         list of lists (containing strings) with fake Russian personal
     """
     # 1. Calculate age and sex values.
+    ages = [JUNIOR, MIDDLE, SENIOR]
+
     total_j, total_m, total_s = demography.calc_ages(total)
     total_male_j, total_female_j = demography.calc_sex(total_j, JUNIOR.female)
     total_male_m, total_female_m = demography.calc_sex(total_m, MIDDLE.female)
     total_male_s, total_female_s = demography.calc_sex(total_s, SENIOR.female)
+
+    totals = [
+        total_male_j,
+        total_female_j,
+        total_male_m,
+        total_female_m,
+        total_male_s,
+        total_female_s,
+    ]
+
     total_male = total_male_j + total_male_m + total_male_s
     total_female = total_female_j + total_female_m + total_female_s
+
+    age_sex = list()
+
+    for age in ages:
+        for sex in SEX:
+            age_sex.append((age, sex))
+
+    groups = list(zip(age_sex, totals))
 
     # 2. Create lists of names.
     lastnames_male = names.read_names(total_male, LASTNAMES_MALE)
@@ -65,63 +85,41 @@ def generate_persons(total: int) -> list[list[str]]:
     )
 
     # 3. Generate dataset.
-    dataset_male_j = generate_data(
-        JUNIOR,
-        SEX.male,
-        total_male_j,
-        lastnames_male,
-        firstnames_male_j,
-        patronymics_male_j,
-    )
-    dataset_female_j = generate_data(
-        JUNIOR,
-        SEX.female,
-        total_female_j,
-        lastnames_female,
-        firstnames_female_j,
-        patronymics_female_j,
-    )
-    dataset_male_m = generate_data(
-        MIDDLE,
-        SEX.male,
-        total_male_m,
-        lastnames_male,
-        firstnames_male_m,
-        patronymics_male_m,
-    )
-    dataset_female_m = generate_data(
-        MIDDLE,
-        SEX.female,
-        total_female_m,
-        lastnames_female,
-        firstnames_female_m,
-        patronymics_female_m,
-    )
-    dataset_male_s = generate_data(
-        SENIOR,
-        SEX.male,
-        total_male_s,
-        lastnames_male,
-        firstnames_male_s,
-        patronymics_male_s,
-    )
-    dataset_female_s = generate_data(
-        SENIOR,
-        SEX.female,
-        total_female_s,
-        lastnames_female,
-        firstnames_female_s,
-        patronymics_female_s,
-    )
+    dataset_persons = list()
 
-    dataset_persons = (
-        dataset_male_j
-        + dataset_female_j
-        + dataset_male_m
-        + dataset_female_m
-        + dataset_male_s
-        + dataset_female_s
-    )
+    for group in groups:
+        age, sex = group[0]
+        amount = group[1]
+
+        lastnames = lastnames_male if (sex == 'муж.') else lastnames_female
+        if age.group == 'J':
+            firstnames = (
+                firstnames_male_j if (sex == 'муж.') else firstnames_female_j
+            )
+            patronymics = (
+                patronymics_male_j if (sex == 'муж.') else patronymics_female_j
+            )
+        if age.group == 'M':
+            firstnames = (
+                firstnames_male_m if (sex == 'муж.') else firstnames_female_m
+            )
+            patronymics = (
+                patronymics_male_m if (sex == 'муж.') else patronymics_female_m
+            )
+        if age.group == 'S':
+            firstnames = (
+                firstnames_male_s if (sex == 'муж.') else firstnames_female_s
+            )
+            patronymics = (
+                patronymics_male_s if (sex == 'муж.') else patronymics_female_s
+            )
+
+        dataset = generate_data(
+            age, sex, amount, lastnames, firstnames, patronymics
+        )
+
+        dataset_persons += dataset
+
     random.shuffle(dataset_persons)
 
     return dataset_persons
@@ -130,7 +128,7 @@ def generate_persons(total: int) -> list[list[str]]:
 def generate_data(
     age: Age,
     sex: str,
-    total_sex_age: int,
+    amount: int,
     lastnames: list[str],
     firstnames: list[str],
     patronymics: list[str],
@@ -140,7 +138,7 @@ def generate_data(
     Args:
         age: object - object of dataclass 'Age' (certain age).
         sex: string - value from namedtuple 'Sex' (male/female).
-        total_sex_age: integer - amount of male/female persons of a certain age.
+        amount: integer - amount of male/female persons of a certain age.
         lastnames: list - Russian last names for male/female.
         firstnames: list - Russian first names of male/age of a certain age.
         patronymics: list - Russian patronymics of male/age of a certain age.
@@ -149,10 +147,10 @@ def generate_data(
         list of lists (containing strings) with fake Russan personal data of
         a certain sex and age.
     """
-    persons = list()
+    persons = [None] * amount
     # For a unique birthday check: list of birthdays.
-    birthdays = list()
-    totals = total_sex_age
+    birthdays = [None] * amount
+    totals = amount
 
     while totals > 0:
         lastname = lastnames.pop()
@@ -163,11 +161,11 @@ def generate_data(
 
         while birthday in birthdays:
             birthday = age.generate_birthday()
-        birthdays.append(birthday)
+        birthdays[totals - 1] = birthday
 
         person = [lastname, firstname, patronymic, sex, birthday]
 
-        persons.append(person)
+        persons[totals - 1] = person
         totals -= 1
 
     return persons

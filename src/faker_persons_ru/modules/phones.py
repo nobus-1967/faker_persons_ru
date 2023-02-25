@@ -13,15 +13,15 @@ def generate_phones(total: int) -> list[str]:
     Returns:
         list of fake Russian cell phone numbers.
     """
-    phones = list()
+    phones = [None] * total
     phones_nums = [num for num in range(1110011, 9990100)]
     random.shuffle(phones_nums)
 
-    for _ in range(total):
+    for i in range(total):
         num = str(phones_nums.pop())
         code = str(random.choice(CODES))
         phone = f'+7({code}){str(num)[:3]}-{str(num)[3:5]}-{str(num)[5:]}'
 
-        phones.append(phone)
+        phones[i] = phone
 
     return phones
