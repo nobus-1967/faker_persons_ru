@@ -1,5 +1,8 @@
 # CHANGES:
 
+## 0.3.1 (2023-02-24)
+- Third release: corrected vars.
+
 ## 0.3.0 (2023-02-24)
 - Third release: converted `csv` to dictionaries, corrected some lastnames, refactored module `names`, improved docstrings.
 
