@@ -1,6 +1,6 @@
 # CHANGES:
 
-## 0.4.0 (2023-02-24)
+## 0.4.0 (2023-02-25)
 - Forth release: rewrited datasets generation algorithms.
 
 ## 0.3.1 (2023-02-24)
