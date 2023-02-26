@@ -35,32 +35,27 @@ def generate_persons(total: int) -> list[list[str]]:
         list of lists (containing strings) with fake Russian personal
     """
     # 1. Calculate age and sex values.
-    ages = [JUNIOR, MIDDLE, SENIOR]
+    amounts = list()
 
     total_j, total_m, total_s = demography.calc_ages(total)
-    total_male_j, total_female_j = demography.calc_sex(total_j, JUNIOR.female)
-    total_male_m, total_female_m = demography.calc_sex(total_m, MIDDLE.female)
-    total_male_s, total_female_s = demography.calc_sex(total_s, SENIOR.female)
 
-    totals = [
-        total_male_j,
-        total_female_j,
-        total_male_m,
-        total_female_m,
-        total_male_s,
-        total_female_s,
-    ]
+    total_male_j, total_female_j = demography.calc_sex(total_j, JUNIOR.female)
+    amounts.extend([total_male_j, total_female_j])
+    total_male_m, total_female_m = demography.calc_sex(total_m, MIDDLE.female)
+    amounts.extend([total_male_m, total_female_m])
+    total_male_s, total_female_s = demography.calc_sex(total_s, SENIOR.female)
+    amounts.extend([total_male_s, total_female_s])
 
     total_male = total_male_j + total_male_m + total_male_s
     total_female = total_female_j + total_female_m + total_female_s
 
-    age_sex = list()
+    groups = list()
 
-    for age in ages:
-        for sex in SEX:
-            age_sex.append((age, sex))
-
-    groups = list(zip(age_sex, totals))
+    for i, age in enumerate([JUNIOR, MIDDLE, SENIOR]):
+        for sex in [SEX.male, SEX.female]:
+            groups.append([age, sex])
+    for i, group in enumerate(groups):
+        group.append(amounts[i])
 
     # 2. Create lists of names.
     lastnames_male = names.read_names(total_male, LASTNAMES_MALE)
@@ -88,8 +83,7 @@ def generate_persons(total: int) -> list[list[str]]:
     dataset_persons = list()
 
     for group in groups:
-        age, sex = group[0]
-        amount = group[1]
+        age, sex, amount = group
 
         lastnames = lastnames_male if (sex == 'муж.') else lastnames_female
         if age.group == 'J':
@@ -140,8 +134,9 @@ def generate_data(
         sex: string - value from namedtuple 'Sex' (male/female).
         amount: integer - amount of male/female persons of a certain age.
         lastnames: list - Russian last names for male/female.
-        firstnames: list - Russian first names of male/age of a certain age.
-        patronymics: list - Russian patronymics of male/age of a certain age.
+        firstnames: list - Russian first names of male/female of a certain age.
+        patronymics: list - Russian patronymics of male/female of a certain
+        age.
 
     Returns:
         list of lists (containing strings) with fake Russan personal data of

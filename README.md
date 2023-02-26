@@ -43,19 +43,53 @@
 
 ## Примеры использования программы:
 
-1. `python3 -m faker_persons_ru` &mdash; генерация и частичный вывод на экран массива из `1000` записей;
+1. `python[3] -m faker_persons_ru` &mdash; генерация и частичный вывод на экран массива из `1000` записей;
 
-2. `python3 -m faker_persons_ru --total 100` &mdash; генерация и частичный вывод на экран `100` записей;
+2. `python[3] -m faker_persons_ru --total 100` &mdash; генерация и частичный вывод на экран `100` записей;
 
-3. `python3 -m faker_persons_ru -total 5000 --output my_dataset --fyletype csv` &mdash; генерация и частичный вывод на экран `5000` записей с сохранением массива данных в файл `my_dataset.csv` в домашней папке пользователя;
+3. `python[3] -m faker_persons_ru -total 5000 --output my_dataset --fyletype csv` &mdash; генерация и частичный вывод на экран `5000` записей с сохранением массива данных в файл `my_dataset.csv` в домашней папке пользователя;
 
-4. `python3 -m faker_persons_ru -t 10_000 -o 'big dataset' -f csv -f sqlite3` &mdash; генерация и частичный вывод на экран `10000` записей с сохранением массива данных в файлы `big dataset.csv` и `big dataset.sqlite3` в домашней папке пользователя;
+4. `python[3] -m faker_persons_ru -t 10_000 -o 'big dataset' -f csv -f sqlite3` &mdash; генерация и частичный вывод на экран `10000` записей с сохранением массива данных в файлы `big dataset.csv` и `big dataset.sqlite3` в домашней папке пользователя;
 
-5. `python3 -m faker_persons_ru --help` &mdash; вывод на экран справочной информации.
+5. `python[3] -m faker_persons_ru --help` &mdash; вывод на экран справочной информации.
 
 ## Установка:
 
-[Релиз v0.4.0](https://github.com/nobus-1967/faker_persons_ru/releases/tag/0.4.0)
+1. Собрать и установить пакет из данного репозитория, например, в `GNU/Linux`:
+- клонировать репозиторий на локальную рабочую станцию:
+
+```bash
+git clone https://github.com/nobus-1967/faker_persons_ru.git
+cd faker_persons_ru/
+```
+
+- собрать пакет (собранный пакет появится в папке `faker_persons_ru/dist`):
+
+```bash
+python3 -m build
+```
+
+- далее установить пакет (лучше всего, как показано ниже &mdash; в *виртуальное окружение*, например, в виртуальную среду в папке `faker` в домашней директории пользователя):
+
+```bash
+python3.11 -m venv ~/faker
+source ~/faker/bin/activate
+pip install -U dist/*.whl
+```
+
+- запустить программу из виртуальной среды:
+
+```bash
+python -m faker_persons_ru
+```
+
+- и не забыть по окончании работы с программой выйти из виртуального окружения:
+
+```bash
+deactivate
+```
+
+2. Скачать и установить готовый пакет последней версии: [Релизы](https://github.com/nobus-1967/faker_persons_ru/releases)
 
 ## Общая информация
 
@@ -64,8 +98,6 @@ Requirements/Зависимости программы: `click`, `pandas`
 Author/Автор программы: Anatoly Shcherbina/Анатолий Щербина
 
 Email: [avshcherbina@gmail.com](mailto:avshcherbina@gmail.com)
-
-Version/Версия программы: `0.4.0`
 
 Changelog/Изменения: [CHANGES.md](CHANGES.md)
 
