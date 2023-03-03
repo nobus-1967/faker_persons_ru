@@ -1,4 +1,4 @@
-"""Module for create Russian names lists based on their weights."""
+"""Module for create data lists based on their weights."""
 import random
 
 

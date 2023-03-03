@@ -45,17 +45,14 @@ SQL_CONTACTS_COLUMNS = ['phone', 'email']
 
 
 def generate_sql(
-    df_persons: pd.DataFrame,
-    df_contacts: pd.DataFrame,
+    df: pd.DataFrame,
     output: str,
     path: Path,
 ) -> None:
     """Generate Common SQL file (tables: 'persons', 'contacts').
 
     Args:
-        df_persons: pandas DataFrame - fake persons (name, sex,
-        date of birth).
-        df_contacts: pandas DataFrame - fake contacts (phones, emails).
+        df: pandas DataFrame - fake persons and (if were chosen) their contacts.
         output: string - file name (without extension).
         path: PosixPath - user home directory.
 
@@ -66,38 +63,47 @@ def generate_sql(
     filename = output + '.sql'
     filepath = path.joinpath(filename)
 
+    is_contacts_info = 'Телефон' and 'E-mail' in df.columns
+
+    if is_contacts_info:
+        persons = df[['Фамилия', 'Имя', 'Отчество', 'Пол', 'Дата рождения']]
+        contacts = df[['Телефон', 'E-mail']]
+    else:
+        persons = df
+
     with open(filepath, 'w') as outfile:
         outfile.write(BEGIN)
         outfile.write(SQL_CREATE_PERSONS_TABLE)
-        outfile.write(SQL_CREATE_CONTACTS_TABLE)
 
-        for row in df_persons.itertuples():
+        if is_contacts_info:
+            outfile.write(SQL_CREATE_CONTACTS_TABLE)
+
+        for row in persons.itertuples():
             ID, lastname, firstname, patronymic, sex, date_of_birth = row
             outfile.write(
                 SQL_INSERT_PERSON_VALUE.format(
                     ID, lastname, firstname, patronymic, sex, date_of_birth
                 )
             )
-
-        for row in df_contacts.itertuples():
-            ID, phone, email = row
-            outfile.write(SQL_INSERT_CONTACT_VALUE.format(ID, phone, email))
+        if is_contacts_info:
+            for row in contacts.itertuples():
+                ID, phone, email = row
+                outfile.write(
+                    SQL_INSERT_CONTACT_VALUE.format(ID, phone, email)
+                )
 
         outfile.write(COMMIT)
 
 
 def generate_sqlite3(
-    df_persons: pd.DataFrame,
-    df_contacts: pd.DataFrame,
+    df: pd.DataFrame,
     output: str,
     path: Path,
 ) -> None:
     """Generate SQLite3 file (tables: 'persons', 'contacts').
 
     Args:
-        df_persons: pandas DataFrame - fake persons (name, sex,
-        date of birth).
-        df_contacts: pandas DataFrame - fake contacts (phones, emails).
+        df: pandas DataFrame - fake persons and (if were chosen) their contacts.
         output: string - file name (without extension).
         path: PosixPath - user home directory.
 
@@ -110,34 +116,46 @@ def generate_sqlite3(
     if filepath.is_file():
         filepath.unlink()
 
-    dict_replace_persons = {
-        x: y for (x, y) in zip(df_persons.columns, SQL_PERSONS_COLUMNS)
-    }
-    persons = df_persons.rename(columns=dict_replace_persons)
+    is_contacts_info = 'Телефон' and 'E-mail' in df.columns
 
-    dict_replace_contacts = {
-        x: y for (x, y) in zip(df_contacts.columns, SQL_CONTACTS_COLUMNS)
+    if is_contacts_info:
+        persons = df[['Фамилия', 'Имя', 'Отчество', 'Пол', 'Дата рождения']]
+        contacts = df[['Телефон', 'E-mail']]
+    else:
+        persons = df
+
+    dict_replace_persons = {
+        x: y for (x, y) in zip(persons.columns, SQL_PERSONS_COLUMNS)
     }
-    contacts = df_contacts.rename(columns=dict_replace_contacts)
+    persons = persons.rename(columns=dict_replace_persons)
+
+    if is_contacts_info:
+        dict_replace_contacts = {
+            x: y for (x, y) in zip(contacts.columns, SQL_CONTACTS_COLUMNS)
+        }
+        contacts = contacts.rename(columns=dict_replace_contacts)
 
     con = sqlite3.connect(filepath)
     cur = con.cursor()
 
     cur.execute(SQL_CREATE_PERSONS_TABLE)
-    cur.execute(SQL_CREATE_CONTACTS_TABLE)
+
+    if is_contacts_info:
+        cur.execute(SQL_CREATE_CONTACTS_TABLE)
 
     persons.to_sql('persons', con, if_exists='append', index=True)
-    contacts.to_sql('contacts', con, if_exists='append', index=True)
+
+    if is_contacts_info:
+        contacts.to_sql('contacts', con, if_exists='append', index=True)
 
     con.close()
 
 
-def generate_csv(df_full: pd.DataFrame, output: str, path: Path) -> None:
+def generate_csv(df: pd.DataFrame, output: str, path: Path) -> None:
     """Generate comma-separated values (CSV) file.
 
     Args:
-        df_full: pandas DataFrame - fake persons & their contacts (name,
-        sex, date of birth, phones, emails).
+        df: pandas DataFrame - fake persons and (if were chosen) their contacts.
         output: string - file name (without extension).
         path: PosixPath - user home directory.
 
@@ -148,15 +166,14 @@ def generate_csv(df_full: pd.DataFrame, output: str, path: Path) -> None:
     filename = output + '.csv'
     filepath = path.joinpath(filename)
 
-    df_full.to_csv(filepath, index=False, quoting=csv.QUOTE_NONNUMERIC)
+    df.to_csv(filepath, index=False, quoting=csv.QUOTE_NONNUMERIC)
 
 
-def generate_excel(df_full: pd.DataFrame, output: str, path: Path) -> None:
+def generate_excel(df: pd.DataFrame, output: str, path: Path) -> None:
     """Generate Microsoft Excel Spreadsheet (XLSX file).
 
     Args:
-        df_full: pandas DataFrame - fake persons & their contacts (name,
-        sex, date of birth, phones, emails).
+        f: pandas DataFrame - fake persons and (if were chosen) their contacts.
         output: string - file name (without extension).
         path: PosixPath - user home directory.
 
@@ -167,4 +184,4 @@ def generate_excel(df_full: pd.DataFrame, output: str, path: Path) -> None:
     filename = output + '.xlsx'
     filepath = path.joinpath(filename)
 
-    df_full.to_excel(filepath, index=False)
+    df.to_excel(filepath, index=False)

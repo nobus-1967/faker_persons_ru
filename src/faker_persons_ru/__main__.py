@@ -31,7 +31,16 @@ CONTACTS: tuple[str, str] = ('Телефон', 'E-mail')
     '--total',
     type=click.IntRange(1, 10_000),
     default=1_000,
-    help='NUMBER of generating fake personal data (default 1000).',
+    help='Number of generating fake personal data (default 1000).',
+)
+@click.option(
+    '-d',
+    '--data',
+    type=click.Choice(['base', 'contacts'], case_sensitive=False),
+    help=(
+        'Generated data: "base" as default (full name, sex, date of birth) '
+        'or "contacts" ("base" + cell phone number and email address).'
+    ),
 )
 @click.option(
     '-f',
@@ -45,9 +54,9 @@ CONTACTS: tuple[str, str] = ('Телефон', 'E-mail')
     '--output',
     default='new_dataset',
     type=click.Path(),
-    help="Output FILENAME, no extension required (default 'new_dataset').",
+    help="Output filename, no extension required (default 'new_dataset').",
 )
-def main(total: int, filetype: str, output: str) -> None:
+def main(total: int, filetype: str, data: str, output: str) -> None:
     """
     faker_persons_ru (using Click and pandas) generates datasets of fake Russian
     personal data (full name, sex, phone number, email address) and store them.
@@ -57,27 +66,29 @@ def main(total: int, filetype: str, output: str) -> None:
     )
 
     dataset_persons = datasets.generate_persons(total)
-    indexes: pd.RangeIndex = pd.RangeIndex(start=1, stop=total + 1, name='ID')
-    df_persons = pd.DataFrame(dataset_persons, columns=PERSONS, index=indexes)
+    indeces: pd.RangeIndex = pd.RangeIndex(start=1, stop=total + 1, name='ID')
+    df_personal = pd.DataFrame(dataset_persons, columns=PERSONS, index=indeces)
 
-    dataset_contacts = datasets.generate_contacts(total, dataset_persons)
-    df_contacts = pd.DataFrame(
-        dataset_contacts, columns=CONTACTS, index=indexes
-    )
+    if data == 'contacts':
+        dataset_contacts = datasets.generate_contacts(total, dataset_persons)
+        df_contacts = pd.DataFrame(
+            dataset_contacts, columns=CONTACTS, index=indeces
+        )
 
-    df_full = df_persons.join(df_contacts)
-    click.echo(df_full)
+        df = df_personal.join(df_contacts)
+    else:
+        df = df_personal
+
+    click.echo(df)
 
     if 'csv' in filetype:
-        outputs.generate_csv(df_full, output, PATH_TO_OUTPUT)
+        outputs.generate_csv(df, output, PATH_TO_OUTPUT)
     if 'sql' in filetype:
-        outputs.generate_sql(df_persons, df_contacts, output, PATH_TO_OUTPUT)
+        outputs.generate_sql(df, output, PATH_TO_OUTPUT)
     if 'sqlite3' in filetype:
-        outputs.generate_sqlite3(
-            df_persons, df_contacts, output, PATH_TO_OUTPUT
-        )
+        outputs.generate_sqlite3(df, output, PATH_TO_OUTPUT)
     if 'xlsx' in filetype:
-        outputs.generate_excel(df_full, output, PATH_TO_OUTPUT)
+        outputs.generate_excel(df, output, PATH_TO_OUTPUT)
 
     click.echo()
 

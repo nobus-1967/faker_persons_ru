@@ -8,7 +8,7 @@ from faker_persons_ru.modules.demography import Age, SEX
 from faker_persons_ru.modules.demography import JUNIOR, MIDDLE, SENIOR
 from faker_persons_ru.modules import emails
 from faker_persons_ru.modules import phones
-from faker_persons_ru.data import names
+from faker_persons_ru.data import reader
 from faker_persons_ru.data.lastnames_male import LASTNAMES_MALE
 from faker_persons_ru.data.lastnames_female import LASTNAMES_FEMALE
 from faker_persons_ru.data.firstnames_j import FIRSTNAMES_MALE_J
@@ -58,24 +58,26 @@ def generate_persons(total: int) -> list[list[str]]:
         group.append(amounts[i])
 
     # 2. Create lists of names.
-    lastnames_male = names.read_names(total_male, LASTNAMES_MALE)
-    lastnames_female = names.read_names(total_female, LASTNAMES_FEMALE)
-    firstnames_male_j = names.read_names(total_male_j, FIRSTNAMES_MALE_J)
-    firstnames_female_j = names.read_names(total_female_j, FIRSTNAMES_FEMALE_J)
-    firstnames_male_m = names.read_names(total_male_m, FIRSNAMES_MALE_M)
-    firstnames_female_m = names.read_names(total_female_m, FIRSNAMES_FEMALE_M)
-    firstnames_male_s = names.read_names(total_male_s, FIRSNAMES_MALE_S)
-    firstnames_female_s = names.read_names(total_female_s, FIRSNAMES_FEMALE_S)
-    patronymics_male_j = names.read_names(total_male_j, PATRONYMICS_MALE_J)
-    patronymics_female_j = names.read_names(
+    lastnames_male = reader.read_names(total_male, LASTNAMES_MALE)
+    lastnames_female = reader.read_names(total_female, LASTNAMES_FEMALE)
+    firstnames_male_j = reader.read_names(total_male_j, FIRSTNAMES_MALE_J)
+    firstnames_female_j = reader.read_names(
+        total_female_j, FIRSTNAMES_FEMALE_J
+    )
+    firstnames_male_m = reader.read_names(total_male_m, FIRSNAMES_MALE_M)
+    firstnames_female_m = reader.read_names(total_female_m, FIRSNAMES_FEMALE_M)
+    firstnames_male_s = reader.read_names(total_male_s, FIRSNAMES_MALE_S)
+    firstnames_female_s = reader.read_names(total_female_s, FIRSNAMES_FEMALE_S)
+    patronymics_male_j = reader.read_names(total_male_j, PATRONYMICS_MALE_J)
+    patronymics_female_j = reader.read_names(
         total_female_j, PATRONYMICS_FEMALE_J
     )
-    patronymics_male_m = names.read_names(total_male_m, PATRONYMICS_MALE_M)
-    patronymics_female_m = names.read_names(
+    patronymics_male_m = reader.read_names(total_male_m, PATRONYMICS_MALE_M)
+    patronymics_female_m = reader.read_names(
         total_female_m, PATRONYMICS_FEMALE_M
     )
-    patronymics_male_s = names.read_names(total_male_s, PATRONYMICS_MALE_S)
-    patronymics_female_s = names.read_names(
+    patronymics_male_s = reader.read_names(total_male_s, PATRONYMICS_MALE_S)
+    patronymics_female_s = reader.read_names(
         total_female_s, PATRONYMICS_FEMALE_S
     )
 

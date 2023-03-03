@@ -1,5 +1,8 @@
 # CHANGES:
 
+## 0.5.0 (2023-03-03)
+- Fifth release: added selection of generated information, renamed and refactored some modules, functions and variables.
+
 ## 0.4.1 (2023-02-26)
 - Forth release: partially refactored module `datasets`.
 
