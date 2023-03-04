@@ -42,6 +42,7 @@ LOCATIONS: tuple[str, str] = ('Регион', 'Населённый пункт')
     type=click.Choice(
         ['base', 'contacts', 'locations', 'full'], case_sensitive=False
     ),
+    multiple=False,
     help=(
         'Generated data: "base" as default (full name, sex, date of birth), '
         + '"contacts" ("base" + cell phone number and email address), '
@@ -58,8 +59,10 @@ LOCATIONS: tuple[str, str] = ('Регион', 'Населённый пункт')
 @click.option(
     '-o',
     '--output',
-    default='new_dataset',
     type=click.Path(),
+    default='new_dataset',
+    prompt=True,
+    prompt_required=False,
     help="Output filename, no extension required (default 'new_dataset').",
 )
 def main(total: int, filetype: str, data: str, output: str) -> None:
@@ -67,8 +70,9 @@ def main(total: int, filetype: str, data: str, output: str) -> None:
     faker_persons_ru (using Click and pandas) generates datasets of fake Russian
     personal data (full name, sex, phone number, email address) and store them.
     """
-    click.echo(
-        f'Generating new dataset "{output}", waiting a few seconds...\n'
+    click.secho(
+        f'Generating new dataset "{output}", waiting a few seconds...\n',
+        fg='green',
     )
 
     dataset_persons = datasets.generate_persons(total)
@@ -82,18 +86,14 @@ def main(total: int, filetype: str, data: str, output: str) -> None:
         )
 
         df = df_personal.join(df_contacts)
-    else:
-        df = df_personal
-    if data == 'locations':
+    elif data == 'locations':
         dataset_locations = datasets.generate_locations(total, LOCALITIES)
         df_locations = pd.DataFrame(
             dataset_locations, columns=LOCATIONS, index=indeces
         )
 
         df = df_personal.join(df_locations)
-    else:
-        df = df_personal
-    if data == 'full':
+    elif data == 'full':
         dataset_contacts = datasets.generate_contacts(total, dataset_persons)
         df_contacts = pd.DataFrame(
             dataset_contacts, columns=CONTACTS, index=indeces
@@ -127,10 +127,11 @@ def main(total: int, filetype: str, data: str, output: str) -> None:
             + f'was successfully stored in your "{PATH_TO_OUTPUT}" directory.'
         )
 
-    click.echo(
+    click.secho(
         '----------------------------\n'
         + f'(c) Anatoly Shcherbina, 2023\n'
-        + f'faker_persons_ru, ver. {__version__.__version__}'
+        + f'faker_persons_ru, ver. {__version__.__version__}',
+        fg='blue',
     )
 
 
