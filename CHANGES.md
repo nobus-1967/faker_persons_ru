@@ -1,5 +1,8 @@
 # CHANGES:
 
+## 0.5.1 (2023-03-04)
+- Fifth release: fixed import in `data/__init__.py`.
+
 ## 0.5.0 (2023-03-03)
 - Fifth release: added selection of generated information, renamed and refactored some modules, functions and variables.
 

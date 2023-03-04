@@ -1,6 +1,6 @@
 # faker_persons_ru
 __all__ = [
-    'names',
+    'reader',
     'lastnames_male',
     'lastnames_female',
     'firstnames_j',
