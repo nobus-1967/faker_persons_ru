@@ -28,10 +28,22 @@ SQL_CREATE_CONTACTS_TABLE = """
     FOREIGN KEY (ID) REFERENCES persons (ID) ON DELETE CASCADE
     );
 """
+SQL_CREATE_LOCATIONS_TABLE = """
+    CREATE TABLE IF NOT EXISTS contacts
+    (
+    ID INTEGER NOT NULL,
+    region TEXT NOT NULL,
+    locality TEXT,
+    FOREIGN KEY (ID) REFERENCES persons (ID) ON DELETE CASCADE
+    );
+"""
 SQL_INSERT_PERSON_VALUE = """
 INSERT INTO persons VALUES({},'{}','{}','{}','{}','{}');
 """
 SQL_INSERT_CONTACT_VALUE = """
+INSERT INTO contacts VALUES({},'{}','{}');
+"""
+SQL_INSERT_LOCATIONS_VALUE = """
 INSERT INTO contacts VALUES({},'{}','{}');
 """
 SQL_PERSONS_COLUMNS = [
@@ -42,6 +54,7 @@ SQL_PERSONS_COLUMNS = [
     'date_of_birth',
 ]
 SQL_CONTACTS_COLUMNS = ['phone', 'email']
+SQL_LOCATIONS_COLUMNS = ['region', 'locality']
 
 
 def generate_sql(
@@ -49,7 +62,7 @@ def generate_sql(
     output: str,
     path: Path,
 ) -> None:
-    """Generate Common SQL file (tables: 'persons', 'contacts').
+    """Generate Common SQL file (tables: 'persons', 'contacts', localities').
 
     Args:
         df: pandas DataFrame - fake persons and (if were chosen) their contacts.
@@ -64,10 +77,18 @@ def generate_sql(
     filepath = path.joinpath(filename)
 
     is_contacts_info = 'Телефон' and 'E-mail' in df.columns
+    is_locations_info = 'Регион' and 'Населённый пункт' in df.columns
 
-    if is_contacts_info:
+    if is_contacts_info and is_locations_info:
         persons = df[['Фамилия', 'Имя', 'Отчество', 'Пол', 'Дата рождения']]
         contacts = df[['Телефон', 'E-mail']]
+        locations = df[['Регион', 'Населённый пункт']]
+    elif is_contacts_info and not is_locations_info:
+        persons = df[['Фамилия', 'Имя', 'Отчество', 'Пол', 'Дата рождения']]
+        contacts = df[['Телефон', 'E-mail']]
+    elif not is_contacts_info and is_locations_info:
+        persons = df[['Фамилия', 'Имя', 'Отчество', 'Пол', 'Дата рождения']]
+        locations = df[['Регион', 'Населённый пункт']]
     else:
         persons = df
 
@@ -77,6 +98,8 @@ def generate_sql(
 
         if is_contacts_info:
             outfile.write(SQL_CREATE_CONTACTS_TABLE)
+        if is_contacts_info:
+            outfile.write(SQL_CREATE_LOCATIONS_TABLE)
 
         for row in persons.itertuples():
             ID, lastname, firstname, patronymic, sex, date_of_birth = row
@@ -91,6 +114,12 @@ def generate_sql(
                 outfile.write(
                     SQL_INSERT_CONTACT_VALUE.format(ID, phone, email)
                 )
+        if is_locations_info:
+            for row in locations.itertuples():
+                ID, region, locality = row
+                outfile.write(
+                    SQL_INSERT_CONTACT_VALUE.format(ID, region, locality)
+                )
 
         outfile.write(COMMIT)
 
@@ -100,7 +129,7 @@ def generate_sqlite3(
     output: str,
     path: Path,
 ) -> None:
-    """Generate SQLite3 file (tables: 'persons', 'contacts').
+    """Generate SQLite3 file (tables: 'persons', 'contacts', 'localities').
 
     Args:
         df: pandas DataFrame - fake persons and (if were chosen) their contacts.
@@ -117,10 +146,18 @@ def generate_sqlite3(
         filepath.unlink()
 
     is_contacts_info = 'Телефон' and 'E-mail' in df.columns
+    is_locations_info = 'Регион' and 'Населённый пункт' in df.columns
 
-    if is_contacts_info:
+    if is_contacts_info and is_locations_info:
         persons = df[['Фамилия', 'Имя', 'Отчество', 'Пол', 'Дата рождения']]
         contacts = df[['Телефон', 'E-mail']]
+        locations = df[['Регион', 'Населённый пункт']]
+    elif is_contacts_info and not is_locations_info:
+        persons = df[['Фамилия', 'Имя', 'Отчество', 'Пол', 'Дата рождения']]
+        contacts = df[['Телефон', 'E-mail']]
+    elif not is_contacts_info and is_locations_info:
+        persons = df[['Фамилия', 'Имя', 'Отчество', 'Пол', 'Дата рождения']]
+        locations = df[['Регион', 'Населённый пункт']]
     else:
         persons = df
 
@@ -134,6 +171,11 @@ def generate_sqlite3(
             x: y for (x, y) in zip(contacts.columns, SQL_CONTACTS_COLUMNS)
         }
         contacts = contacts.rename(columns=dict_replace_contacts)
+    if is_locations_info:
+        dict_replace_locations = {
+            x: y for (x, y) in zip(locations.columns, SQL_LOCATIONS_COLUMNS)
+        }
+        locations = locations.rename(columns=dict_replace_locations)
 
     con = sqlite3.connect(filepath)
     cur = con.cursor()
@@ -142,11 +184,15 @@ def generate_sqlite3(
 
     if is_contacts_info:
         cur.execute(SQL_CREATE_CONTACTS_TABLE)
+    if is_locations_info:
+        cur.execute(SQL_CREATE_LOCATIONS_TABLE)
 
     persons.to_sql('persons', con, if_exists='append', index=True)
 
     if is_contacts_info:
         contacts.to_sql('contacts', con, if_exists='append', index=True)
+    if is_locations_info:
+        locations.to_sql('locations', con, if_exists='append', index=True)
 
     con.close()
 

@@ -2,7 +2,8 @@
 """
 Main module for:
 - set options through CLI,
-- create resulting DataFrames of fake Russian personal data and contacts, and
+- create resulting DataFrames of fake Russian personal data, contacts and
+locations, and
 - save data into different formats (CSV, SQL, MS Excel) in user home directory.
 """
 import click
@@ -12,6 +13,7 @@ from pathlib import Path
 
 from faker_persons_ru.modules import datasets
 from faker_persons_ru.modules import outputs
+from faker_persons_ru.data.locations import LOCALITIES
 from faker_persons_ru import __version__
 
 PATH_TO_OUTPUT: Path = Path.home()
@@ -23,6 +25,7 @@ PERSONS: tuple[str, str, str, str, str] = (
     'Дата рождения',
 )
 CONTACTS: tuple[str, str] = ('Телефон', 'E-mail')
+LOCATIONS: tuple[str, str] = ('Регион', 'Населённый пункт')
 
 
 @click.command()
@@ -36,10 +39,13 @@ CONTACTS: tuple[str, str] = ('Телефон', 'E-mail')
 @click.option(
     '-d',
     '--data',
-    type=click.Choice(['base', 'contacts'], case_sensitive=False),
+    type=click.Choice(
+        ['base', 'contacts', 'locations', 'full'], case_sensitive=False
+    ),
     help=(
-        'Generated data: "base" as default (full name, sex, date of birth) '
-        'or "contacts" ("base" + cell phone number and email address).'
+        'Generated data: "base" as default (full name, sex, date of birth), '
+        + '"contacts" ("base" + cell phone number and email address), '
+        + '"locations" ("base" + region and locality) or "full".'
     ),
 )
 @click.option(
@@ -76,6 +82,29 @@ def main(total: int, filetype: str, data: str, output: str) -> None:
         )
 
         df = df_personal.join(df_contacts)
+    else:
+        df = df_personal
+    if data == 'locations':
+        dataset_locations = datasets.generate_locations(total, LOCALITIES)
+        df_locations = pd.DataFrame(
+            dataset_locations, columns=LOCATIONS, index=indeces
+        )
+
+        df = df_personal.join(df_locations)
+    else:
+        df = df_personal
+    if data == 'full':
+        dataset_contacts = datasets.generate_contacts(total, dataset_persons)
+        df_contacts = pd.DataFrame(
+            dataset_contacts, columns=CONTACTS, index=indeces
+        )
+
+        dataset_locations = datasets.generate_locations(total, LOCALITIES)
+        df_locations = pd.DataFrame(
+            dataset_locations, columns=LOCATIONS, index=indeces
+        )
+
+        df = df_personal.join([df_contacts, df_locations])
     else:
         df = df_personal
 

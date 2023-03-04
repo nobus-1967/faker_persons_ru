@@ -9,4 +9,5 @@ __all__ = [
     'patronymics_j',
     'patronymics_m',
     'patronymics_s',
+    'locations',
 ]

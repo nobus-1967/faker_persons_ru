@@ -1,8 +1,6 @@
 """Module for generating datasets (fake Russian personal data and contacts)."""
 import random
 
-from pathlib import Path
-
 from faker_persons_ru.modules import demography
 from faker_persons_ru.modules.demography import Age, SEX
 from faker_persons_ru.modules.demography import JUNIOR, MIDDLE, SENIOR
@@ -169,7 +167,7 @@ def generate_data(
 
 
 def generate_contacts(total: int, dataset_persons: list[list[str]]) -> zip:
-    """Generate a dataset of fake Russian contacts (cell phone numbers, emails).
+    """Generate dataset of fake Russian contacts (cell phone numbers, emails).
 
     Args:
         total: integer - total amount of persons from user input.
@@ -185,3 +183,30 @@ def generate_contacts(total: int, dataset_persons: list[list[str]]) -> zip:
     dataset_contacts = zip(phone_nums, email_addresses)
 
     return dataset_contacts
+
+
+def generate_locations(
+    total: int, locations_dict: dict[str, list[str, int]]
+) -> zip:
+    """Generate dataset of Russian locations (region and populated locality.
+
+    Args:
+        total: integer - total amount of persons from user input.
+        locations_list: dict - Russian localities (as keys), regions and weights
+        (as list of values)
+
+    Returns:
+        zip of lists (containing strings) with Russian regions and localities.
+    """
+    regions = [None] * total
+    localities = [None] * total
+
+    locations = reader.read_locations(total, locations_dict)
+
+    for i, location in enumerate(locations):
+        regions[i] = location[0]
+        localities[i] = location[1]
+
+    dataset_locations = zip(regions, localities)
+
+    return dataset_locations

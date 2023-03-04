@@ -1,5 +1,8 @@
 # CHANGES:
 
+## 0.6.0 (2023-03-04)
+- Sixth release: added data and code to generate information about location (place of residence).
+
 ## 0.5.1 (2023-03-04)
 - Fifth release: fixed import in `data/__init__.py`.
 
