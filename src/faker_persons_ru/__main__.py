@@ -32,9 +32,12 @@ LOCATIONS: tuple[str, str] = ('Регион', 'Населённый пункт')
 @click.option(
     '-t',
     '--total',
-    type=click.IntRange(1, 10_000),
+    type=click.IntRange(1, 10_000, clamp=True),
     default=1_000,
-    help='Number of generating fake personal data (default 1000).',
+    help=(
+        'Number of generating fake personal data (default 1000).'
+        + ' Only one value is accepted!'
+    ),
 )
 @click.option(
     '-d',
@@ -47,6 +50,7 @@ LOCATIONS: tuple[str, str] = ('Регион', 'Населённый пункт')
         'Generated data: "base" as default (full name, sex, date of birth), '
         + '"contacts" ("base" + cell phone number and email address), '
         + '"locations" ("base" + region and locality) or "full".'
+        + ' Only one value is accepted!'
     ),
 )
 @click.option(
@@ -54,7 +58,10 @@ LOCATIONS: tuple[str, str] = ('Регион', 'Населённый пункт')
     '--filetype',
     type=click.Choice(['csv', 'sql', 'sqlite3', 'xlsx'], case_sensitive=False),
     multiple=True,
-    help='Type of output file: CSV, Common SQL, SQLite3 DB, MS Excel.',
+    help=(
+        'Type of output file: CSV, Common SQL, SQLite3 DB, MS Excel.'
+        + ' Multiply values are accepted!'
+    ),
 )
 @click.option(
     '-o',
@@ -63,12 +70,18 @@ LOCATIONS: tuple[str, str] = ('Регион', 'Населённый пункт')
     default='new_dataset',
     prompt=True,
     prompt_required=False,
-    help="Output filename, no extension required (default 'new_dataset').",
+    help=(
+        "Output filename, no extension required (default 'new_dataset')."
+        + ' Only one value is accepted!'
+    ),
 )
-def main(total: int, filetype: str, data: str, output: str) -> None:
+def main(
+    total: int, filetype: tuple[str, ...], data: str, output: str
+) -> None:
     """
     faker_persons_ru (using Click and pandas) generates datasets of fake Russian
-    personal data (full name, sex, phone number, email address) and store them.
+    personal data (full name, sex, phone number, email address, region and
+    locality) and store them into different formats.
     """
     click.secho(
         f'Generating new dataset "{output}", waiting a few seconds...\n',
@@ -121,7 +134,7 @@ def main(total: int, filetype: str, data: str, output: str) -> None:
 
     click.echo()
 
-    for filetype in filetype:
+    for extension in filetype:
         click.echo(
             f'Dataset "{output}.{filetype}" ({total} personal data records) '
             + f'was successfully stored in your "{PATH_TO_OUTPUT}" directory.'

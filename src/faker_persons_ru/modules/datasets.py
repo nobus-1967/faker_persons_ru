@@ -142,9 +142,9 @@ def generate_data(
         list of lists (containing strings) with fake Russan personal data of
         a certain sex and age.
     """
-    persons = [None] * amount
+    persons = list()
     # For a unique birthday check: list of birthdays.
-    birthdays = [None] * amount
+    birthdays = list()
     totals = amount
 
     while totals > 0:
@@ -156,11 +156,11 @@ def generate_data(
 
         while birthday in birthdays:
             birthday = age.generate_birthday()
-        birthdays[totals - 1] = birthday
+        birthdays.append(birthday)
 
         person = [lastname, firstname, patronymic, sex, birthday]
 
-        persons[totals - 1] = person
+        persons.append(person)
         totals -= 1
 
     return persons
@@ -186,7 +186,7 @@ def generate_contacts(total: int, dataset_persons: list[list[str]]) -> zip:
 
 
 def generate_locations(
-    total: int, locations_dict: dict[str, list[str, int]]
+    total: int, locations_dict: dict[str, tuple[str, float]]
 ) -> zip:
     """Generate dataset of Russian locations (region and populated locality.
 
@@ -198,14 +198,14 @@ def generate_locations(
     Returns:
         zip of lists (containing strings) with Russian regions and localities.
     """
-    regions = [None] * total
-    localities = [None] * total
+    regions = list()
+    localities = list()
 
     locations = reader.read_locations(total, locations_dict)
 
-    for i, location in enumerate(locations):
-        regions[i] = location[0]
-        localities[i] = location[1]
+    for location in locations:
+        regions.append(location[0])
+        localities.append(location[1])
 
     dataset_locations = zip(regions, localities)
 

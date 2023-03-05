@@ -1,5 +1,5 @@
 """Dictionaries of Russian last names names and their weights (male)."""
-LASTNAMES_FEMALE: dict[str, int] = {
+LASTNAMES_FEMALE: dict[str, float] = {
     'Абрамова': 0.33,
     'Авдеева': 0.14,
     'Агапова': 0.05,

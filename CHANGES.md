@@ -1,5 +1,9 @@
 # CHANGES:
 
+## 0.6.2 (2023-03-05)
+
+- Sixth release: removed over-optimization, correct type hints, fixed `Click()` options and `README.md`.
+
 ## 0.6.1 (2023-03-04)
 
 - Sixth release: fixed `Click()` options.

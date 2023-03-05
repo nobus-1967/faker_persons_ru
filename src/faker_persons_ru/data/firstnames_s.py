@@ -1,5 +1,5 @@
 """Dictionaries of Russian first names and their weights (senior age group)."""
-FIRSNAMES_MALE_S: dict[str, int] = {
+FIRSNAMES_MALE_S: dict[str, float] = {
     'Александр': 10.68,
     'Алексей': 6.54,
     'Альберт': 0.21,
@@ -51,7 +51,7 @@ FIRSNAMES_MALE_S: dict[str, int] = {
     'Юрий': 3.05,
     'Ярослав': 0.14,
 }
-FIRSNAMES_FEMALE_S: dict[str, int] = {
+FIRSNAMES_FEMALE_S: dict[str, float] = {
     'Алевтина': 0.12,
     'Александра': 0.47,
     'Алёна': 1.23,

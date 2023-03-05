@@ -1,5 +1,5 @@
 """Dictionaries of Russian patronymics and their weights (junior age group)."""
-PATRONYMICS_MALE_J: dict[str, int] = {
+PATRONYMICS_MALE_J: dict[str, float] = {
     'Александрович': 10.38,
     'Алексеевич': 7.14,
     'Анатольевич': 0.6,
@@ -51,7 +51,7 @@ PATRONYMICS_MALE_J: dict[str, int] = {
     'Юрьевич': 1.45,
     'Ярославич': 0.43,
 }
-PATRONYMICS_FEMALE_J: dict[str, int] = {
+PATRONYMICS_FEMALE_J: dict[str, float] = {
     'Александровна': 10.38,
     'Алексеевна': 7.14,
     'Анатольевна': 0.6,
