@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "faker_persons_ru"
-version = "0.6.2"
+version = "0.7.0"
 authors = [
   { name="Anatoly Shcherbina", email="avshcherbina@gmail.com" },
 ]
@@ -35,9 +35,6 @@ license = {file = "LICENSE"}
 [project.urls]
 "Homepage" = "https://github.com/nobus-1967/faker_persons_ru/"
 "Сhangelog" = "https://github.com/nobus-1967/faker_persons_ru/CHANGES.md"
-
-[project.entry-points."cli"]
-cli = "__main__:main"
 
 [tool.setuptools]
 include-package-data = true

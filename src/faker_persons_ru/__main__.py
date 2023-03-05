@@ -75,9 +75,7 @@ LOCATIONS: tuple[str, str] = ('Регион', 'Населённый пункт')
         + ' Only one value is accepted!'
     ),
 )
-def main(
-    total: int, filetype: tuple[str, ...], data: str, output: str
-) -> None:
+def cli(total: int, filetype: tuple[str, ...], data: str, output: str) -> None:
     """
     faker_persons_ru (using Click and pandas) generates datasets of fake Russian
     personal data (full name, sex, phone number, email address, region and
@@ -88,39 +86,7 @@ def main(
         fg='green',
     )
 
-    dataset_persons = datasets.generate_persons(total)
-    indeces: pd.RangeIndex = pd.RangeIndex(start=1, stop=total + 1, name='ID')
-    df_personal = pd.DataFrame(dataset_persons, columns=PERSONS, index=indeces)
-
-    if data == 'contacts':
-        dataset_contacts = datasets.generate_contacts(total, dataset_persons)
-        df_contacts = pd.DataFrame(
-            dataset_contacts, columns=CONTACTS, index=indeces
-        )
-
-        df = df_personal.join(df_contacts)
-    elif data == 'locations':
-        dataset_locations = datasets.generate_locations(total, LOCALITIES)
-        df_locations = pd.DataFrame(
-            dataset_locations, columns=LOCATIONS, index=indeces
-        )
-
-        df = df_personal.join(df_locations)
-    elif data == 'full':
-        dataset_contacts = datasets.generate_contacts(total, dataset_persons)
-        df_contacts = pd.DataFrame(
-            dataset_contacts, columns=CONTACTS, index=indeces
-        )
-
-        dataset_locations = datasets.generate_locations(total, LOCALITIES)
-        df_locations = pd.DataFrame(
-            dataset_locations, columns=LOCATIONS, index=indeces
-        )
-
-        df = df_personal.join([df_contacts, df_locations])
-    else:
-        df = df_personal
-
+    df = generate_data(total, data)
     click.echo(df)
 
     if 'csv' in filetype:
@@ -148,5 +114,55 @@ def main(
     )
 
 
+def generate_data(total: int, data: str) -> pd.DataFrame:
+    """Create pandas DataFrame frome generated dataset(s).
+
+    Args:
+        total: integer - total amount of persons from user input.
+        data: string - volume of generated data (personal info,
+        personal info and contacts, personal info and localities,
+        full info).
+
+    Returns:
+        pandas DataFrame (fake personal data).
+    """
+    dataset_base = datasets.generate_base(total)
+    indeces: pd.RangeIndex = pd.RangeIndex(start=1, stop=total + 1, name='ID')
+    df_base = pd.DataFrame(dataset_base, columns=PERSONS, index=indeces)
+
+    if data == 'contacts':
+        dataset_contacts = datasets.generate_contacts(total, dataset_base)
+        df_contacts = pd.DataFrame(
+            dataset_contacts, columns=CONTACTS, index=indeces
+        )
+        df_base_plus_contacts = df_base.join(df_contacts)
+
+        return df_base_plus_contacts
+    elif data == 'locations':
+        dataset_locations = datasets.generate_locations(total, LOCALITIES)
+        df_locations = pd.DataFrame(
+            dataset_locations, columns=LOCATIONS, index=indeces
+        )
+        df_base_plus_locations = df_base.join(df_locations)
+
+        return df_base_plus_locations
+    elif data == 'full':
+        dataset_contacts = datasets.generate_contacts(total, dataset_base)
+        df_contacts = pd.DataFrame(
+            dataset_contacts, columns=CONTACTS, index=indeces
+        )
+
+        dataset_locations = datasets.generate_locations(total, LOCALITIES)
+        df_locations = pd.DataFrame(
+            dataset_locations, columns=LOCATIONS, index=indeces
+        )
+
+        df_full = df_base.join([df_contacts, df_locations])
+
+        return df_full
+    else:
+        return df_base
+
+
 if __name__ == '__main__':
-    main()
+    cli()

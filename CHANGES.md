@@ -1,5 +1,9 @@
 # CHANGES:
 
+## 0.7.0 (2023-03-05)
+
+- Seventh release: refactored `pandas` DataFrames generation.
+
 ## 0.6.2 (2023-03-05)
 
 - Sixth release: removed over-optimization, correct type hints, fixed `Click()` options and `README.md`.

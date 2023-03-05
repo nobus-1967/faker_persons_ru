@@ -23,14 +23,14 @@ from faker_persons_ru.data.patronymics_s import PATRONYMICS_MALE_S
 from faker_persons_ru.data.patronymics_s import PATRONYMICS_FEMALE_S
 
 
-def generate_persons(total: int) -> list[list[str]]:
+def generate_base(total: int) -> list[list[str]]:
     """Generate a dataset of fake Russian data (name, sex, date of birth).
 
     Args:
         total: integer - total amount of persons from user input.
 
     Returns:
-        list of lists (containing strings) with fake Russian personal
+        list of lists (containing strings) with fake Russian personal data.
     """
     # 1. Calculate age and sex values.
     amounts = list()
@@ -80,7 +80,7 @@ def generate_persons(total: int) -> list[list[str]]:
     )
 
     # 3. Generate dataset.
-    dataset_persons = list()
+    dataset_base = list()
 
     for group in groups:
         age, sex, amount = group
@@ -108,18 +108,18 @@ def generate_persons(total: int) -> list[list[str]]:
                 patronymics_male_s if (sex == 'муж.') else patronymics_female_s
             )
 
-        dataset = generate_data(
+        dataset = generate_persons(
             age, sex, amount, lastnames, firstnames, patronymics
         )
 
-        dataset_persons += dataset
+        dataset_base += dataset
 
-    random.shuffle(dataset_persons)
+    random.shuffle(dataset_base)
 
-    return dataset_persons
+    return dataset_base
 
 
-def generate_data(
+def generate_persons(
     age: Age,
     sex: str,
     amount: int,
@@ -166,7 +166,7 @@ def generate_data(
     return persons
 
 
-def generate_contacts(total: int, dataset_persons: list[list[str]]) -> zip:
+def generate_contacts(total: int, dataset_base: list[list[str]]) -> zip:
     """Generate dataset of fake Russian contacts (cell phone numbers, emails).
 
     Args:
@@ -178,7 +178,7 @@ def generate_contacts(total: int, dataset_persons: list[list[str]]) -> zip:
         zip of lists (containing strings) with fake Russian phones and emails.
     """
     phone_nums = phones.generate_phones(total)
-    email_addresses = emails.generate_emails(dataset_persons)
+    email_addresses = emails.generate_emails(dataset_base)
 
     dataset_contacts = zip(phone_nums, email_addresses)
 
