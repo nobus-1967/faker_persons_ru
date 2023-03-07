@@ -29,7 +29,7 @@ SQL_CREATE_CONTACTS_TABLE = """
     );
 """
 SQL_CREATE_LOCATIONS_TABLE = """
-    CREATE TABLE IF NOT EXISTS contacts
+    CREATE TABLE IF NOT EXISTS locations
     (
     ID INTEGER NOT NULL,
     region TEXT NOT NULL,
@@ -44,7 +44,7 @@ SQL_INSERT_CONTACT_VALUE = """
 INSERT INTO contacts VALUES({},'{}','{}');
 """
 SQL_INSERT_LOCATIONS_VALUE = """
-INSERT INTO contacts VALUES({},'{}','{}');
+INSERT INTO locations VALUES({},'{}','{}');
 """
 SQL_PERSONS_COLUMNS = [
     'lastname',
@@ -118,7 +118,7 @@ def generate_sql(
             for row in locations.itertuples():
                 ID, region, locality = row
                 outfile.write(
-                    SQL_INSERT_CONTACT_VALUE.format(ID, region, locality)
+                    SQL_INSERT_LOCATIONS_VALUE.format(ID, region, locality)
                 )
 
         outfile.write(COMMIT)

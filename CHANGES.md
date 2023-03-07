@@ -1,5 +1,9 @@
 # CHANGES:
 
+## 0.7.1 (2023-03-07)
+
+- Seventh release: fixed output for `SQL`.
+
 ## 0.7.0 (2023-03-05)
 
 - Seventh release: refactored `pandas` DataFrames generation.
