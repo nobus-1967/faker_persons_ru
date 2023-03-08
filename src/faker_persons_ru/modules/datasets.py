@@ -148,17 +148,19 @@ def generate_persons(
     totals = amount
 
     while totals > 0:
-        lastname = lastnames.pop()
-        firstname = firstnames.pop()
-        patronymic = patronymics.pop()
-
         birthday = age.generate_birthday()
 
         while birthday in birthdays:
             birthday = age.generate_birthday()
         birthdays.append(birthday)
 
-        person = [lastname, firstname, patronymic, sex, birthday]
+        person = [
+            lastnames.pop(),
+            firstnames.pop(),
+            patronymics.pop(),
+            sex,
+            birthday,
+        ]
 
         persons.append(person)
         totals -= 1
