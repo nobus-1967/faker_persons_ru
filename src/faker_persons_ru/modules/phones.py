@@ -27,7 +27,7 @@ def gen_phones(total: int) -> list[str]:
     Returns:
         A list (of str) containing fake Russian cell phone numbers.
     """
-    phones_lst = []
+    phones_lst: list[str] = []
     phones_nums_dset = [num for num in range(1110011, 9990100)]
     random.shuffle(phones_nums_dset)
 

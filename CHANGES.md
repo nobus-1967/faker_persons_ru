@@ -1,6 +1,10 @@
 # CHANGES:
 
-## 0.8.0 (2023-03-010)
+## 0.9.0 (2023-03-10)
+
+- Nineth release (pre-final): refactored and cleaned code (birthday generations), fixed type hints, updated `README.md`.
+
+## 0.8.0 (2023-03-10)
 
 - Eighth release: refactored and cleaned code (names of vars and functions, others), fixed output for common `SQL` and `SQLite3`, improved docstrings.
 

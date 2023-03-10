@@ -32,7 +32,7 @@ LOCATIONS: tuple[str, str] = ('Регион', 'Населённый пункт')
 @click.option(
     '-t',
     '--total',
-    type=click.IntRange(1, 10_000, clamp=True),
+    type=click.IntRange(1, 100_000, clamp=True),
     default=1_000,
     help=(
         'Number of generating fake personal data (default 1000).'

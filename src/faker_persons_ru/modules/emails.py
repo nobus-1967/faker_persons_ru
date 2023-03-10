@@ -118,7 +118,7 @@ def gen_emails(persons_dset: list[list[str]]) -> list[str]:
     Returns:
         A list (of str) containings fake Russian email addresses.
     """
-    emails_lst = []
+    emails_lst: list[str] = []
 
     for i, row in enumerate(persons_dset):
         lastname = row[0]
@@ -128,7 +128,7 @@ def gen_emails(persons_dset: list[list[str]]) -> list[str]:
 
         email = gen_login(lastname, firstname, year, var)
 
-        while email in emails_lst:
+        while emails_lst.count(email) > 0:
             var += 1
             email = gen_login(lastname, firstname, year, var)
 

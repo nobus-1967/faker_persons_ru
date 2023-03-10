@@ -8,6 +8,7 @@ from itertools import product
 from faker_persons_ru.modules import demography
 from faker_persons_ru.modules.demography import Age, SEX
 from faker_persons_ru.modules.demography import JUNIOR, MIDDLE, SENIOR
+from faker_persons_ru.modules import birthdays
 from faker_persons_ru.modules import emails
 from faker_persons_ru.modules import phones
 from faker_persons_ru.data import reader
@@ -37,22 +38,28 @@ def gen_base(total: int) -> list[list[str]]:
         A list (lists of str) containing fake Russian personal data.
     """
     # 1. Calculate age and sex values.
-    total_j, total_m, total_s = demography.calc_ages(total)
+    amount_j, amount_m, amount_s = demography.calc_ages(total)
 
-    total_male_j, total_female_j = demography.calc_sex(total_j, JUNIOR.female)
-    total_male_m, total_female_m = demography.calc_sex(total_m, MIDDLE.female)
-    total_male_s, total_female_s = demography.calc_sex(total_s, SENIOR.female)
+    amount_males_j, amount_females_j = demography.calc_sex(
+        amount_j, JUNIOR.females
+    )
+    amount_males_m, amount_females_m = demography.calc_sex(
+        amount_m, MIDDLE.females
+    )
+    amount_males_s, amount_females_s = demography.calc_sex(
+        amount_s, SENIOR.females
+    )
 
-    total_male = total_male_j + total_male_m + total_male_s
-    total_female = total_female_j + total_female_m + total_female_s
+    amount_males = amount_males_j + amount_males_m + amount_males_s
+    amount_females = amount_females_j + amount_females_m + amount_females_s
 
     amounts_lst = [
-        total_male_j,
-        total_female_j,
-        total_male_m,
-        total_female_m,
-        total_male_s,
-        total_female_s,
+        amount_males_j,
+        amount_females_j,
+        amount_males_m,
+        amount_females_m,
+        amount_males_s,
+        amount_females_s,
     ]
 
     demography_lst = list(
@@ -60,31 +67,35 @@ def gen_base(total: int) -> list[list[str]]:
     )
 
     # 2. Create lists of names.
-    lastnames_male = reader.read_names(total_male, LASTNAMES_MALE)
-    lastnames_female = reader.read_names(total_female, LASTNAMES_FEMALE)
-    firstnames_male_j = reader.read_names(total_male_j, FIRSTNAMES_MALE_J)
-    firstnames_female_j = reader.read_names(
-        total_female_j, FIRSTNAMES_FEMALE_J
+    lastnames_male = reader.read_names(amount_males, LASTNAMES_MALE)
+    lastnames_female = reader.read_names(amount_females, LASTNAMES_FEMALE)
+    firstnames_males_j = reader.read_names(amount_males_j, FIRSTNAMES_MALE_J)
+    firstnames_females_j = reader.read_names(
+        amount_females_j, FIRSTNAMES_FEMALE_J
     )
-    firstnames_male_m = reader.read_names(total_male_m, FIRSNAMES_MALE_M)
-    firstnames_female_m = reader.read_names(total_female_m, FIRSNAMES_FEMALE_M)
-    firstnames_male_s = reader.read_names(total_male_s, FIRSNAMES_MALE_S)
-    firstnames_female_s = reader.read_names(total_female_s, FIRSNAMES_FEMALE_S)
-    patronymics_male_j = reader.read_names(total_male_j, PATRONYMICS_MALE_J)
-    patronymics_female_j = reader.read_names(
-        total_female_j, PATRONYMICS_FEMALE_J
+    firstnames_males_m = reader.read_names(amount_males_m, FIRSNAMES_MALE_M)
+    firstnames_females_m = reader.read_names(
+        amount_females_m, FIRSNAMES_FEMALE_M
     )
-    patronymics_male_m = reader.read_names(total_male_m, PATRONYMICS_MALE_M)
-    patronymics_female_m = reader.read_names(
-        total_female_m, PATRONYMICS_FEMALE_M
+    firstnames_males_s = reader.read_names(amount_males_s, FIRSNAMES_MALE_S)
+    firstnames_females_s = reader.read_names(
+        amount_females_s, FIRSNAMES_FEMALE_S
     )
-    patronymics_male_s = reader.read_names(total_male_s, PATRONYMICS_MALE_S)
-    patronymics_female_s = reader.read_names(
-        total_female_s, PATRONYMICS_FEMALE_S
+    patronymics_males_j = reader.read_names(amount_males_j, PATRONYMICS_MALE_J)
+    patronymics_females_j = reader.read_names(
+        amount_females_j, PATRONYMICS_FEMALE_J
+    )
+    patronymics_males_m = reader.read_names(amount_males_m, PATRONYMICS_MALE_M)
+    patronymics_females_m = reader.read_names(
+        amount_females_m, PATRONYMICS_FEMALE_M
+    )
+    patronymics_males_s = reader.read_names(amount_males_s, PATRONYMICS_MALE_S)
+    patronymics_females_s = reader.read_names(
+        amount_females_s, PATRONYMICS_FEMALE_S
     )
 
     # 3. Generate dataset.
-    base_dset = []
+    base_dset: list[list[str]] = []
 
     for i, part in enumerate(demography_lst):
         age, sex = part
@@ -93,24 +104,30 @@ def gen_base(total: int) -> list[list[str]]:
         lastnames = lastnames_male if (sex == 'муж.') else lastnames_female
         if age.group == 'J':
             firstnames = (
-                firstnames_male_j if (sex == 'муж.') else firstnames_female_j
+                firstnames_males_j if (sex == 'муж.') else firstnames_females_j
             )
             patronymics = (
-                patronymics_male_j if (sex == 'муж.') else patronymics_female_j
+                patronymics_males_j
+                if (sex == 'муж.')
+                else patronymics_females_j
             )
         if age.group == 'M':
             firstnames = (
-                firstnames_male_m if (sex == 'муж.') else firstnames_female_m
+                firstnames_males_m if (sex == 'муж.') else firstnames_females_m
             )
             patronymics = (
-                patronymics_male_m if (sex == 'муж.') else patronymics_female_m
+                patronymics_males_m
+                if (sex == 'муж.')
+                else patronymics_females_m
             )
         if age.group == 'S':
             firstnames = (
-                firstnames_male_s if (sex == 'муж.') else firstnames_female_s
+                firstnames_males_s if (sex == 'муж.') else firstnames_females_s
             )
             patronymics = (
-                patronymics_male_s if (sex == 'муж.') else patronymics_female_s
+                patronymics_males_s
+                if (sex == 'муж.')
+                else patronymics_females_s
             )
 
         dset = gen_persons(
@@ -148,17 +165,11 @@ def gen_persons(
         A list (lists of str) containing fake Russan personal data of a certain
         sex and age.
     """
-    persons_lst = []
-    # List of birthdays for uniqueness check.
-    birthdays = []
-    totals = amount
+    persons_lst: list[list[str]] = []
+    birthdays_lst = birthdays.gen_birthdays(age, amount)
 
-    while totals > 0:
-        birthday = age.gen_birthday()
-
-        while birthday in birthdays:
-            birthday = age.gen_birthday()
-        birthdays.append(birthday)
+    for _ in range(amount):
+        birthday = birthdays_lst.pop()
 
         person = [
             lastnames.pop(),
@@ -168,8 +179,13 @@ def gen_persons(
             birthday,
         ]
 
+        if birthdays_lst.count(birthday) > 0:
+            while persons_lst.count(person) > 0:
+                birthdays_lst.insert(0, person.pop())
+                birthday_new = birthdays_lst.pop()
+                person.append(birthday_new)
+
         persons_lst.append(person)
-        totals -= 1
 
     return persons_lst
 
@@ -206,8 +222,8 @@ def gen_locations(
     Returns:
         A zip of lists (str) containing Russian regions and localities.
     """
-    regions_lst = []
-    localities_lst = []
+    regions_lst: list[str] = []
+    localities_lst: list[str] = []
 
     locations_lst = reader.read_locations(total, locations_dict)
 
