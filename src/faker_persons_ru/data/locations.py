@@ -1,4 +1,4 @@
-"""Dictionaries of Russian localities (with regions) and their weights."""
+"""Dictionaries of Russian localities with regions and their weights."""
 LOCALITIES: dict[str, tuple[str, float]] = {
     'г. Белгород': ('Белгородская обл.', 0.3847),
     'г. Алексеевка': ('Белгородская обл.', 0.0413),

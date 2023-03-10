@@ -1,4 +1,4 @@
-"""Module for generating age and sex values for fake Russian datasets."""
+"""Module for generating age/sex values for fake Russian datasets."""
 import datetime
 import random
 
@@ -8,7 +8,7 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class Age:
-    """Class for different ages."""
+    """A dataclass for different ages."""
 
     group: str
     proportion: float
@@ -16,18 +16,18 @@ class Age:
     end_year: int
     female: float
 
-    def generate_birthday(self) -> str:
-        """Generate random birthday for the age.
+    def gen_birthday(self) -> str:
+        """Generate a random birthday for the age.
 
         Returns:
-            string from datetime containing date of birth (YYYY-MM-DD).
+            A str from datetime containing date of birth (YYYY-MM-DD).
         """
         start_date = datetime.datetime(self.start_year, 1, 1)
         end_date = datetime.datetime(self.end_year, 12, 31)
-        random_timestamp = random.randint(
+        random_timest = random.randint(
             int(start_date.timestamp()), int(end_date.timestamp())
         )
-        birthday = datetime.datetime.fromtimestamp(random_timestamp)
+        birthday = datetime.datetime.fromtimestamp(random_timest)
 
         return birthday.strftime('%Y-%m-%d')
 
@@ -36,13 +36,13 @@ Sex = namedtuple('Sex', ['male', 'female'])
 
 
 def calc_ages(total: int) -> tuple[int, int, int]:
-    """Calculate amounts of persons of each age.
+    """Calculate amounts of fake persons of each age.
 
     Args:
-        total: integer - total amount of persons from user input.
+        total: int - A total amount of fake personal records; from user input.
 
     Returns:
-        tuple of integers represents amounts of persons of a certain age.
+        A tuple (of int) representing amounts of fake persons of a certain age.
     """
     total_j, total_m, total_s = 0, 0, 0
 
@@ -66,14 +66,14 @@ def calc_ages(total: int) -> tuple[int, int, int]:
 
 
 def calc_sex(total_age: int, female_age: float) -> tuple[int, int]:
-    """Calculate total persons of each sex.
+    """Calculate amounts of fake persons of each sex.
 
     Args:
-        total_age: integer - amount of persons for a certain age.
-        female_age: float of females' percent in the ages.
+        total_age: int - A total amount of fake personal records; from user input.
+        female_age: float - A females' percent in the ages.
 
     Returns:
-        A tuple of integers - amounts of male/female persons.
+        A tuple (of int) representing amounts of male/female persons.
     """
     male, female = 0, 0
 

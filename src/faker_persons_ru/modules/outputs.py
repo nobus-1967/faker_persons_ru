@@ -5,10 +5,7 @@ import pandas as pd
 
 from pathlib import Path
 
-
-BEGIN = 'BEGIN TRANSACTION;\n'
-COMMIT = '\nCOMMIT;'
-SQL_CREATE_PERSONS_TABLE = """
+SQL_CREATE_PERSONS_TABLE: str = """
     CREATE TABLE IF NOT EXISTS persons
     (
     ID INTEGER NOT NULL PRIMARY KEY,
@@ -19,7 +16,7 @@ SQL_CREATE_PERSONS_TABLE = """
     date_of_birth DATE NOT NULL
     );
 """
-SQL_CREATE_CONTACTS_TABLE = """
+SQL_CREATE_CONTACTS_TABLE: str = """
     CREATE TABLE IF NOT EXISTS contacts
     (
     ID INTEGER NOT NULL,
@@ -28,7 +25,7 @@ SQL_CREATE_CONTACTS_TABLE = """
     FOREIGN KEY (ID) REFERENCES persons (ID) ON DELETE CASCADE
     );
 """
-SQL_CREATE_LOCATIONS_TABLE = """
+SQL_CREATE_LOCATIONS_TABLE: str = """
     CREATE TABLE IF NOT EXISTS locations
     (
     ID INTEGER NOT NULL,
@@ -37,41 +34,32 @@ SQL_CREATE_LOCATIONS_TABLE = """
     FOREIGN KEY (ID) REFERENCES persons (ID) ON DELETE CASCADE
     );
 """
-SQL_INSERT_PERSON_VALUE = """
-INSERT INTO persons VALUES({},'{}','{}','{}','{}','{}');
-"""
-SQL_INSERT_CONTACT_VALUE = """
-INSERT INTO contacts VALUES({},'{}','{}');
-"""
-SQL_INSERT_LOCATIONS_VALUE = """
-INSERT INTO locations VALUES({},'{}','{}');
-"""
-SQL_PERSONS_COLUMNS = [
+SQL_PERSONS_COLUMNS: list[str] = [
     'lastname',
     'firstname',
     'patronymic',
     'sex',
     'date_of_birth',
 ]
-SQL_CONTACTS_COLUMNS = ['phone', 'email']
-SQL_LOCATIONS_COLUMNS = ['region', 'locality']
+SQL_CONTACTS_COLUMNS: list[str] = ['phone', 'email']
+SQL_LOCATIONS_COLUMNS: list[str] = ['region', 'locality']
 
 
-def generate_sql(
+def to_sql(
     df: pd.DataFrame,
     output: str,
     path: Path,
 ) -> None:
-    """Generate Common SQL file (tables: 'persons', 'contacts', localities').
+    """Generate a common SQL file (tables: 'persons', 'contacts', localities').
 
     Args:
-        df: pandas DataFrame - fake persons and (if were chosen) their contacts.
-        output: string - file name (without extension).
-        path: PosixPath - user home directory.
+        df: pd.DataFrame - Fake persons and (if were chosen) their contacts.
+        output: str - A file name (without extension).
+        path: PosixPath - A path to user's home directory.
 
     Notes:
-        save DataFrames as common SQL file (may be imported into RDBMS).
-        use generic data types (TEXT for strings, DATE for dates).
+        Save pandas DataFrames as a common SQL file (may be imported into RDBMS)
+        using generic data types (TEXT for strings, DATE for dates).
     """
     filename = output + '.sql'
     filepath = path.joinpath(filename)
@@ -93,7 +81,10 @@ def generate_sql(
         persons = df
 
     with open(filepath, 'w') as outfile:
-        outfile.write(BEGIN)
+        outfile.write(
+            f'--- You have to create database manually and run this file!\n'
+        )
+        outfile.write('BEGIN TRANSACTION;\n')
         outfile.write(SQL_CREATE_PERSONS_TABLE)
 
         if is_contacts_info:
@@ -104,41 +95,43 @@ def generate_sql(
         for row in persons.itertuples():
             ID, lastname, firstname, patronymic, sex, date_of_birth = row
             outfile.write(
-                SQL_INSERT_PERSON_VALUE.format(
-                    ID, lastname, firstname, patronymic, sex, date_of_birth
-                )
+                'INSERT INTO persons VALUES '
+                + f'({ID}, "{lastname}", "{firstname}", "{patronymic}", '
+                + f'"{sex}", "{date_of_birth}");\n'
             )
         if is_contacts_info:
             for row in contacts.itertuples():
                 ID, phone, email = row
                 outfile.write(
-                    SQL_INSERT_CONTACT_VALUE.format(ID, phone, email)
+                    'INSERT INTO contacts VALUES '
+                    + f'({ID}, "{phone}", "{email}");\n'
                 )
         if is_locations_info:
             for row in locations.itertuples():
                 ID, region, locality = row
                 outfile.write(
-                    SQL_INSERT_LOCATIONS_VALUE.format(ID, region, locality)
+                    'INSERT INTO locations VALUES '
+                    + f'({ID}, "{region}", "{locality}");\n'
                 )
 
-        outfile.write(COMMIT)
+        outfile.write('\nCOMMIT;')
 
 
-def generate_sqlite3(
+def to_sqlite3(
     df: pd.DataFrame,
     output: str,
     path: Path,
 ) -> None:
-    """Generate SQLite3 file (tables: 'persons', 'contacts', 'localities').
+    """Generate a SQLite3 file (tables: 'persons', 'contacts', 'localities').
 
     Args:
-        df: pandas DataFrame - fake persons and (if were chosen) their contacts.
-        output: string - file name (without extension).
-        path: PosixPath - user home directory.
+        df: pd.DataFrame - Fake persons and (if were chosen) their contacts.
+        output: str - A file name (without extension).
+        path: PosixPath - A path to user's home directory.
 
     Notes:
-        save DataFrames as SQLite3 database file.
-        use generic data types (TEXT for strings, DATE for dates).
+        Save pandas DataFrames as a SQLIte3 database using generic data types
+        (TEXT for strings, DATE for dates).
     """
     filename = output + '.sqlite3'
     filepath = path.joinpath(filename)
@@ -197,17 +190,17 @@ def generate_sqlite3(
     con.close()
 
 
-def generate_csv(df: pd.DataFrame, output: str, path: Path) -> None:
-    """Generate comma-separated values (CSV) file.
+def to_csv(df: pd.DataFrame, output: str, path: Path) -> None:
+    """Generate a comma-separated values (CSV) file.
 
     Args:
-        df: pandas DataFrame - fake persons and (if were chosen) their contacts.
-        output: string - file name (without extension).
-        path: PosixPath - user home directory.
+        df: pd.DataFrame - Fake persons and (if were chosen) their contacts.
+        output: str - A file name (without extension).
+        path: PosixPath - A path to user's home directory.
 
     Notes:
-        save DataFrames as comma-separated values (CSV) file.
-        uses a comma (',') to separate values.
+        Save a pandas DataFrame as a comma-separated values (CSV) file using a
+        comma (',') to separate values.
     """
     filename = output + '.csv'
     filepath = path.joinpath(filename)
@@ -215,17 +208,17 @@ def generate_csv(df: pd.DataFrame, output: str, path: Path) -> None:
     df.to_csv(filepath, index=False, quoting=csv.QUOTE_NONNUMERIC)
 
 
-def generate_excel(df: pd.DataFrame, output: str, path: Path) -> None:
-    """Generate Microsoft Excel Spreadsheet (XLSX file).
+def to_excel(df: pd.DataFrame, output: str, path: Path) -> None:
+    """Generate a Microsoft Excel Spreadsheet (XLSX file).
 
     Args:
-        f: pandas DataFrame - fake persons and (if were chosen) their contacts.
-        output: string - file name (without extension).
-        path: PosixPath - user home directory.
+        df: pd.DataFrame - Fake persons and (if were chosen) their contacts.
+        output: str - A file name (without extension).
+        path: PosixPath - A path to user's home directory.
 
     Notes:
-        save DataFrames as Microsoft Excel spreadsheet.
-        uses XLSX file format (Microsoft Excel 2007 and later).
+        Save a pandas DataFrame as a Microsoft Excel spreadsheet using XLSX file
+        format (Microsoft Excel 2007 and later).
     """
     filename = output + '.xlsx'
     filepath = path.joinpath(filename)

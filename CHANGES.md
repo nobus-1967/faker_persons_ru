@@ -1,8 +1,8 @@
 # CHANGES:
 
-## 0.7.3 (2023-03-09)
+## 0.8.0 (2023-03-010)
 
-- Seventh release: fixed typos in modules, edited `README.md`.
+- Eighth release: refactored and cleaned code (names of vars and functions, others), fixed output for common `SQL` and `SQLite3`, improved docstrings.
 
 ## 0.7.2 (2023-03-08)
 

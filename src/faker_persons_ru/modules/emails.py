@@ -1,7 +1,7 @@
-"""Module for generating fake Russian emails based on fake Russian names."""
+"""Module for generating fake Russian emails based on fake Russian persons."""
 import random
 
-TRANSLIT = {
+TRANSLIT: dict[str, str] = {
     'а': 'a',
     'б': 'b',
     'в': 'v',
@@ -49,7 +49,7 @@ TRANSLIT = {
     '8': '8',
     '9': '9',
 }
-PATTERNS = [
+PATTERNS: list[str] = [
     '{firstname}.{lastname}',
     '{firstname[0]}.{lastname}',
     '{lastname}.{firstname}',
@@ -94,7 +94,7 @@ PATTERNS = [
     '{lastname}-{firstname}-{year[2]}{year[3]}',
     '{lastname}-{firstname[0]}-{year[2]}{year[3]}',
 ]
-DOMAINS = [
+DOMAINS: list[str] = [
     '@ruspost.online',
     '@ruspost.net',
     '@ruspost.net.ru',
@@ -108,69 +108,69 @@ DOMAINS = [
 ]
 
 
-def generate_emails(dataset_persons: list[list[str]]) -> list[str]:
-    """Generate a dataset of fake Russian emails.
+def gen_emails(persons_dset: list[list[str]]) -> list[str]:
+    """Generate a dataset of fake Russian email addresses.
 
     Args:
-        dataset_persons: list of lists (containing strings) - fake Russian
-        personal info.
+        persons_dset: list of lists (of str) - A dataset of Fake Russian
+        records with personal info.
 
     Returns:
-        list of strings containings fake Russian emails.
+        A list (of str) containings fake Russian email addresses.
     """
-    emails = list()
+    emails_lst = []
 
-    for i, row in enumerate(dataset_persons):
+    for i, row in enumerate(persons_dset):
         lastname = row[0]
         firstname = row[1]
         year = row[4][:4]
         var = i % 12
 
-        email = generate_login(lastname, firstname, year, var)
+        email = gen_login(lastname, firstname, year, var)
 
-        while email in emails:
+        while email in emails_lst:
             var += 1
-            email = generate_login(lastname, firstname, year, var)
+            email = gen_login(lastname, firstname, year, var)
 
-        emails.append(email)
+        emails_lst.append(email)
 
-    return emails
+    return emails_lst
 
 
-def transliterate_login(ru_login: str) -> str:
-    """Generate email login for fake Russian name.
+def translit_login(login_ru: str) -> str:
+    """Generate a login for a fake Russian email address.
 
     Args:
-        ru_login: string - login in Russian.
+        login_ru: str - A login from Russian personal info (Russian letters).
 
     Returns:
-        en_login as transliterated string for generating personal email address.
+        A login (str) as transliterated spelling for a fake email address.
     """
-    en_login = ''
+    login_en = ''
 
-    for ch in ru_login.lower():
-        en_login += TRANSLIT[ch]
+    for ch in login_ru.lower():
+        login_en += TRANSLIT[ch]
 
-    return en_login
+    return login_en
 
 
-def generate_login(lastname: str, firstname: str, year: str, var: int) -> str:
-    """Generate email address for fake person (from name and date of birth).
+def gen_login(lastname: str, firstname: str, year: str, var: int) -> str:
+    """Generate an email address for a fake person.
 
     Args:
-        lastname: string of Russian last name.
-        firstname: string of Russian first name.
-        year: string of person's year of birth.
-        var: integer for a pattern of email address.
+        lastname: str - A Russian last name.
+        firstname: str - A Russian first name.
+        year: str - A person's year of birth (use if neсessary).
+        var: int - A number of a pattern of email addresses.
 
     Returns:
-        string as fake Russian personal email address.
+        A str as fake Russian personal email address.
     """
     pattern = PATTERNS[var]
     domain = random.choice(DOMAINS)
-    ru_login = pattern.format(
+    login_ru = pattern.format(
         lastname=lastname, firstname=firstname, year=year
     )
-    email = transliterate_login(ru_login) + domain
+    email = translit_login(login_ru) + domain
 
     return email

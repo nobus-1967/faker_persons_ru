@@ -86,23 +86,24 @@ def cli(total: int, filetype: tuple[str, ...], data: str, output: str) -> None:
         fg='green',
     )
 
-    df = generate_data(total, data)
+    df = gen_data(total, data)
     click.echo(df)
 
     if 'csv' in filetype:
-        outputs.generate_csv(df, output, PATH_TO_OUTPUT)
+        outputs.to_csv(df, output, PATH_TO_OUTPUT)
     if 'sql' in filetype:
-        outputs.generate_sql(df, output, PATH_TO_OUTPUT)
+        outputs.to_sql(df, output, PATH_TO_OUTPUT)
     if 'sqlite3' in filetype:
-        outputs.generate_sqlite3(df, output, PATH_TO_OUTPUT)
+        outputs.to_sqlite3(df, output, PATH_TO_OUTPUT)
     if 'xlsx' in filetype:
-        outputs.generate_excel(df, output, PATH_TO_OUTPUT)
+        outputs.to_excel(df, output, PATH_TO_OUTPUT)
 
     click.echo()
 
     for extension in filetype:
         click.echo(
-            f'Dataset "{output}.{filetype}" ({total} personal data records) '
+            f'The dataset "{output}.{extension}" '
+            + f'({total} fake personal data records) '
             + f'was successfully stored in your "{PATH_TO_OUTPUT}" directory.'
         )
 
@@ -114,54 +115,53 @@ def cli(total: int, filetype: tuple[str, ...], data: str, output: str) -> None:
     )
 
 
-def generate_data(total: int, data: str) -> pd.DataFrame:
+def gen_data(total: int, data: str) -> pd.DataFrame:
     """Create pandas DataFrame frome generated dataset(s).
 
     Args:
-        total: integer - total amount of persons from user input.
-        data: string - volume of generated data (personal info,
-        personal info and contacts, personal info and localities,
-        full info).
+        total: int - A total amount of fake personal records; from user input.
+        data: str - A volume of generated data (personal info / personal info
+        and contacts / personal info and localities / full info).
 
     Returns:
-        pandas DataFrame (fake personal data).
+        A pandas DataFrame containing fake Russian personal and other data.
     """
-    dataset_base = datasets.generate_base(total)
+    base_dset = datasets.gen_base(total)
     indeces: pd.RangeIndex = pd.RangeIndex(start=1, stop=total + 1, name='ID')
-    df_base = pd.DataFrame(dataset_base, columns=PERSONS, index=indeces)
+    base_df = pd.DataFrame(base_dset, columns=PERSONS, index=indeces)
 
     if data == 'contacts':
-        dataset_contacts = datasets.generate_contacts(total, dataset_base)
-        df_contacts = pd.DataFrame(
-            dataset_contacts, columns=CONTACTS, index=indeces
+        contacts_dset = datasets.gen_contacts(total, base_dset)
+        contacts_df = pd.DataFrame(
+            contacts_dset, columns=CONTACTS, index=indeces
         )
-        df_base_plus_contacts = df_base.join(df_contacts)
+        base_plus_contacts_df = base_df.join(contacts_df)
 
-        return df_base_plus_contacts
+        return base_plus_contacts_df
     elif data == 'locations':
-        dataset_locations = datasets.generate_locations(total, LOCALITIES)
-        df_locations = pd.DataFrame(
-            dataset_locations, columns=LOCATIONS, index=indeces
+        locations_dset = datasets.gen_locations(total, LOCALITIES)
+        locations_df = pd.DataFrame(
+            locations_dset, columns=LOCATIONS, index=indeces
         )
-        df_base_plus_locations = df_base.join(df_locations)
+        base_plus_locations_df = base_df.join(locations_df)
 
-        return df_base_plus_locations
+        return base_plus_locations_df
     elif data == 'full':
-        dataset_contacts = datasets.generate_contacts(total, dataset_base)
-        df_contacts = pd.DataFrame(
-            dataset_contacts, columns=CONTACTS, index=indeces
+        contacts_dset = datasets.gen_contacts(total, base_dset)
+        contacts_df = pd.DataFrame(
+            contacts_dset, columns=CONTACTS, index=indeces
         )
 
-        dataset_locations = datasets.generate_locations(total, LOCALITIES)
-        df_locations = pd.DataFrame(
-            dataset_locations, columns=LOCATIONS, index=indeces
+        locations_dset = datasets.gen_locations(total, LOCALITIES)
+        locations_df = pd.DataFrame(
+            locations_dset, columns=LOCATIONS, index=indeces
         )
 
-        df_full = df_base.join([df_contacts, df_locations])
+        full_df = base_df.join([contacts_df, locations_df])
 
-        return df_full
+        return full_df
     else:
-        return df_base
+        return base_df
 
 
 if __name__ == '__main__':
