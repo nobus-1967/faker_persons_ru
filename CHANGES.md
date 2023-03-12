@@ -2,7 +2,7 @@
 
 ## 1.1.0 (2023-03-12)
 
-- First final release, updated: fixed output for `SQL` and `SQLite3`, added output for `MySQL`.
+- First final release, update 1: fixed output for `SQL` and `SQLite3`, added output for `MySQL/MariaDB`.
 
 ## 1.0.0 (2023-03-12)
 
