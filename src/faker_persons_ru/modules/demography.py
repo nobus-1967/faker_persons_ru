@@ -1,8 +1,9 @@
 """Module for generating age/sex values for fake Russian datasets."""
 import random
 
-from collections import namedtuple
 from dataclasses import dataclass
+
+SEX = ['муж.', 'жен.']
 
 
 @dataclass(frozen=True)
@@ -11,22 +12,19 @@ class Age:
 
     group: str
     proportion: float
-    start_year: int
-    end_year: int
+    year_start: int
+    year_end: int
     females: float
 
 
-Sex = namedtuple('Sex', ['male', 'female'])
-
-
-def calc_ages(total: int) -> tuple[int, int, int]:
-    """Calculate amounts of fake persons of each age.
+def calc_age_amounts(total: int) -> tuple[int, int, int]:
+    """Calculate amounts of persons of each age.
 
     Args:
-        total: int - A total amount of fake personal records; from user input.
+        total: A total amount (int) of generatin fake records; from user input.
 
     Returns:
-        A tuple (of int) representing amounts of fake persons of a certain age.
+        A tuple (of int) representing amounts of persons of a certain age.
     """
     total_j, total_m, total_s = 0, 0, 0
 
@@ -48,12 +46,12 @@ def calc_ages(total: int) -> tuple[int, int, int]:
     return total_j, total_m, total_s
 
 
-def calc_sex(age_amount: int, females_pcent: float) -> tuple[int, int]:
-    """Calculate amounts of fake persons of each sex.
+def calc_sex_amounts(age_amount: int, females_pcent: float) -> tuple[int, int]:
+    """Calculate total persons of each sex.
 
     Args:
-        age_amount: int - An amount of persons of a certain age.
-        females_pcent: float - A females' percent in the age.
+        age_amount: An amount (int) of persons of a certain age.
+        females_pcent: A percent (float) of female persons in the ages.
 
     Returns:
         A tuple (of int) representing amounts of male/female persons.
@@ -76,6 +74,3 @@ def calc_sex(age_amount: int, females_pcent: float) -> tuple[int, int]:
 JUNIOR = Age('J', 0.27, 1990, 2004, 0.49)
 MIDDLE = Age('M', 0.42, 1973, 1989, 0.51)
 SENIOR = Age('S', 0.31, 1958, 1972, 0.55)
-
-
-SEX = Sex('муж.', 'жен.')

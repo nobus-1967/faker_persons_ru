@@ -53,9 +53,11 @@ def to_sql(
     """Generate a common SQL file (tables: 'persons', 'contacts', localities').
 
     Args:
-        df: pd.DataFrame - Fake persons and (if were chosen) their contacts.
-        output: str - A file name (without extension).
-        path: PosixPath - A path to user's home directory.
+        df: A dataset (pandas DataFrame) containing fake Russian
+        personal data; each record may include full name, sex, date of birth,
+        cell phone number and email address, region and populated locality.
+        output: A file name without extension (str).
+        path: A path (PosixPath) to user's home directory.
 
     Notes:
         Save pandas DataFrames as a common SQL file (may be imported into RDBMS)
@@ -125,9 +127,11 @@ def to_sqlite3(
     """Generate a SQLite3 file (tables: 'persons', 'contacts', 'localities').
 
     Args:
-        df: pd.DataFrame - Fake persons and (if were chosen) their contacts.
-        output: str - A file name (without extension).
-        path: PosixPath - A path to user's home directory.
+        df: A dataset (pandas DataFrame) containing fake Russian
+        personal data; each record may include full name, sex, date of birth,
+        cell phone number and email address, region and populated locality.
+        output: A file name without extension (str).
+        path: A path (PosixPath) to user's home directory.
 
     Notes:
         Save pandas DataFrames as a SQLIte3 database using generic data types
@@ -194,9 +198,11 @@ def to_csv(df: pd.DataFrame, output: str, path: Path) -> None:
     """Generate a comma-separated values (CSV) file.
 
     Args:
-        df: pd.DataFrame - Fake persons and (if were chosen) their contacts.
-        output: str - A file name (without extension).
-        path: PosixPath - A path to user's home directory.
+        df: A dataset (pandas DataFrame) containing fake Russian
+        personal data; each record may include full name, sex, date of birth,
+        cell phone number and email address, region and populated locality.
+        output: A file name without extension (str).
+        path: A path (PosixPath) to user's home directory.
 
     Notes:
         Save a pandas DataFrame as a comma-separated values (CSV) file using a
@@ -212,9 +218,11 @@ def to_excel(df: pd.DataFrame, output: str, path: Path) -> None:
     """Generate a Microsoft Excel Spreadsheet (XLSX file).
 
     Args:
-        df: pd.DataFrame - Fake persons and (if were chosen) their contacts.
-        output: str - A file name (without extension).
-        path: PosixPath - A path to user's home directory.
+        df: A dataset (pandas DataFrame) containing fake Russian
+        personal data; each record may include full name, sex, date of birth,
+        cell phone number and email address, region and populated locality.
+        output: A file name without extension (str).
+        path: A path (PosixPath) to user's home directory.
 
     Notes:
         Save a pandas DataFrame as a Microsoft Excel spreadsheet using XLSX file

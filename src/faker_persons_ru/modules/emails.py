@@ -108,19 +108,20 @@ DOMAINS: list[str] = [
 ]
 
 
-def gen_emails(persons_dset: list[list[str]]) -> list[str]:
+def gen_emails(base_dset: list[list[str]]) -> list[str]:
     """Generate a dataset of fake Russian email addresses.
 
     Args:
-        persons_dset: list of lists (of str) - A dataset of Fake Russian
-        records with personal info.
+        base_dset: A dataset (list of lists of str) containing fake Russian
+        personal data, including names and date of birth.
 
     Returns:
-        A list (of str) containings fake Russian email addresses.
+        A list of strings containing fake Russian email addresses based on
+        Russian names and--if necessary--years of birth.
     """
     emails_lst: list[str] = []
 
-    for i, row in enumerate(persons_dset):
+    for i, row in enumerate(base_dset):
         lastname = row[0]
         firstname = row[1]
         year = row[4][:4]
@@ -128,7 +129,7 @@ def gen_emails(persons_dset: list[list[str]]) -> list[str]:
 
         email = gen_login(lastname, firstname, year, var)
 
-        while emails_lst.count(email) > 0:
+        while email in emails_lst:
             var += 1
             email = gen_login(lastname, firstname, year, var)
 
@@ -138,13 +139,15 @@ def gen_emails(persons_dset: list[list[str]]) -> list[str]:
 
 
 def translit_login(login_ru: str) -> str:
-    """Generate a login for a fake Russian email address.
+    """Generate email login for fake Russian name.
 
     Args:
-        login_ru: str - A login from Russian personal info (Russian letters).
+        login_ru: A login (string) based on Russian name and--if
+        necessary--year of birth.
 
     Returns:
-        A login (str) as transliterated spelling for a fake email address.
+        A string as a transliterated login_ru for generating fake personal
+        email address.
     """
     login_en = ''
 
@@ -155,16 +158,16 @@ def translit_login(login_ru: str) -> str:
 
 
 def gen_login(lastname: str, firstname: str, year: str, var: int) -> str:
-    """Generate an email address for a fake person.
+    """Generate email address for fake person from name and date of birth.
 
     Args:
-        lastname: str - A Russian last name.
-        firstname: str - A Russian first name.
-        year: str - A person's year of birth (use if neсessary).
-        var: int - A number of a pattern of email addresses.
+        lastname: A Russian last name (str).
+        firstname: A Russian first name (str).
+        year: A person's year of birth (str).
+        var: A number (int) for a pattern of email address.
 
     Returns:
-        A str as fake Russian personal email address.
+        A str containing a fake Russian personal email address.
     """
     pattern = PATTERNS[var]
     domain = random.choice(DOMAINS)

@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """
 Main module for:
-- set options through CLI,
-- create resulting DataFrames of fake Russian personal data, contacts and
-locations, and
-- save data into different formats (CSV, SQL, MS Excel) in user home directory.
+- define options through CLI,
+- set type of generating fake Russian personal data,
+- create resulting DataFrames of fake Russian personal data, and
+- save data into different formats (CSV, Common SQL, SQLite3 or MS Excel) in
+user's home directory.
 """
 import click
 import pandas as pd
@@ -119,12 +120,13 @@ def gen_data(total: int, data: str) -> pd.DataFrame:
     """Create pandas DataFrame frome generated dataset(s).
 
     Args:
-        total: int - A total amount of fake personal records; from user input.
-        data: str - A volume of generated data (personal info / personal info
-        and contacts / personal info and localities / full info).
+        total: A total amount (int) of records/fake persons; from user input.
+        data: A type (str) of generated data - personal info/
+        personal info and contacts/personal info and localities/full info.
 
     Returns:
-        A pandas DataFrame containing fake Russian personal and other data.
+        A pandas DataFrame containing fake Russian personal data and--if they
+        were chosen--contacts info and locations.
     """
     base_dset = datasets.gen_base(total)
     indeces: pd.RangeIndex = pd.RangeIndex(start=1, stop=total + 1, name='ID')
