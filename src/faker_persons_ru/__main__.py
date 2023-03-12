@@ -4,8 +4,8 @@ Main module for:
 - define options through CLI,
 - set type of generating fake Russian personal data,
 - create resulting DataFrames of fake Russian personal data, and
-- save data into different formats (CSV, Common SQL, SQLite3 or MS Excel) in
-user's home directory.
+- save data into different formats (CSV, MS Excel, SQL, SQLite3, MySQL/MariaDB)
+in user's home directory.
 """
 import click
 import pandas as pd
@@ -36,8 +36,8 @@ LOCATIONS: tuple[str, str] = ('Регион', 'Населённый пункт')
     type=click.IntRange(1, 100_000, clamp=True),
     default=1_000,
     help=(
-        'Number of generating fake personal data (default 1000).'
-        + ' Only one value is accepted!'
+        'Number of generating fake personal data (default 1000). '
+        + 'Only one value is accepted!'
     ),
 )
 @click.option(
@@ -50,18 +50,21 @@ LOCATIONS: tuple[str, str] = ('Регион', 'Населённый пункт')
     help=(
         'Generated data: "base" as default (full name, sex, date of birth), '
         + '"contacts" ("base" + cell phone number and email address), '
-        + '"locations" ("base" + region and locality) or "full".'
-        + ' Only one value is accepted!'
+        + '"locations" ("base" + region and locality) or "full". '
+        + 'Only one value is accepted!'
     ),
 )
 @click.option(
     '-f',
     '--filetype',
-    type=click.Choice(['csv', 'sql', 'sqlite3', 'xlsx'], case_sensitive=False),
+    type=click.Choice(
+        ['csv', 'xlsx', 'sql', 'sqlite3', 'mariadb'], case_sensitive=False
+    ),
     multiple=True,
     help=(
-        'Type of output file: CSV, Common SQL, SQLite3 DB, MS Excel.'
-        + ' Multiply values are accepted!'
+        'Type of output file: CSV, MS Excel, Common SQL, SQLite3 DB, '
+        + 'SQL for MySQL/MariaDB. '
+        + 'Multiply values are accepted!'
     ),
 )
 @click.option(
@@ -72,8 +75,8 @@ LOCATIONS: tuple[str, str] = ('Регион', 'Населённый пункт')
     prompt=True,
     prompt_required=False,
     help=(
-        "Output filename, no extension required (default 'new_dataset')."
-        + ' Only one value is accepted!'
+        "Output filename, no extension required (default 'new_dataset'). "
+        + 'Only one value is accepted!'
     ),
 )
 def cli(total: int, filetype: tuple[str, ...], data: str, output: str) -> None:
@@ -92,12 +95,14 @@ def cli(total: int, filetype: tuple[str, ...], data: str, output: str) -> None:
 
     if 'csv' in filetype:
         outputs.to_csv(df, output, PATH_TO_OUTPUT)
+    if 'xlsx' in filetype:
+        outputs.to_excel(df, output, PATH_TO_OUTPUT)
     if 'sql' in filetype:
         outputs.to_sql(df, output, PATH_TO_OUTPUT)
     if 'sqlite3' in filetype:
         outputs.to_sqlite3(df, output, PATH_TO_OUTPUT)
-    if 'xlsx' in filetype:
-        outputs.to_excel(df, output, PATH_TO_OUTPUT)
+    if 'mariadb' in filetype:
+        outputs.to_mariadb(df, output, PATH_TO_OUTPUT)
 
     click.echo()
 

@@ -1,5 +1,9 @@
 # CHANGES:
 
+## 1.1.0 (2023-03-12)
+
+- First final release, updated: fixed output for `SQL` and `SQLite3`, added output for `MySQL`.
+
 ## 1.0.0 (2023-03-12)
 
 - First final release: refactored and cleaned code (mainly in `datasets` module), fixed docstrings.
