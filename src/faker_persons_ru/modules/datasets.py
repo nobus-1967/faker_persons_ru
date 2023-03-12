@@ -103,7 +103,7 @@ def gen_persons(
     firstnames: dict[str, float],
     patronymics: dict[str, float],
 ) -> list[list[str]]:
-    """Generate fake Russian data for a certain age (name, sex, date of birth).
+    """Generate fake Russian data (name, sex, date of birth).
 
     Args:
         age: An object of dataclass 'Age' for a certain age.
@@ -117,8 +117,8 @@ def gen_persons(
         their weights (values, float).
 
     Returns:
-        A list of lists (containing strings) with fake Russan personal data of
-        a certain sex and age.
+        A list (of lists of str) containing fake Russan personal data (name,
+        sex, date of birth) of a certain sex and age.
     """
     persons_lst: list[list[str]] = []
     birthdays_dq = deque(birthdays.gen_birthdays(age, amount))
