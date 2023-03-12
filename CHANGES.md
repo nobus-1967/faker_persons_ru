@@ -1,8 +1,8 @@
 # CHANGES:
 
-## 1.0.0 (2023-03-11
+## 1.0.0 (2023-03-12)
 
-- Final release # 1: refactored and cleaned code (mainly in `datasets` module), fixed docstrings.
+- First final release: refactored and cleaned code (mainly in `datasets` module), fixed docstrings.
 
 ## 0.9.0 (2023-03-10)
 
