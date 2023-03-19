@@ -369,8 +369,8 @@ def to_mysql(df: pd.DataFrame, output: str, path: Path) -> None:
                 + f'"{sex}", "{date_of_birth}")'
             )
 
-        print(*persons_lst, sep=',\n')
-        print(';\nUNLOCK TABLES;\n')
+        print(*persons_lst, sep=',\n', end=';\n')
+        print('\nUNLOCK TABLES;\n')
 
         if is_contacts_info:
             print('\n-- Create table `contacts`:\n')
@@ -386,8 +386,8 @@ def to_mysql(df: pd.DataFrame, output: str, path: Path) -> None:
                 ID, phone, email = row
                 contacts_lst.append(f'({ID}, "{phone}", "{email}")')
 
-            print(*contacts_lst, sep=',\n')
-            print(';\nUNLOCK TABLES;\n')
+            print(*contacts_lst, sep=',\n', end=';\n')
+            print('\nUNLOCK TABLES;\n')
 
         if is_locations_info:
             print('\n-- Create table `locations`:\n')
@@ -403,8 +403,8 @@ def to_mysql(df: pd.DataFrame, output: str, path: Path) -> None:
                 ID, region, locality = row
                 locations_lst.append(f'({ID}, "{region}", "{locality}")')
 
-            print(*locations_lst, sep=',\n')
-            print(';\nUNLOCK TABLES;\n')
+            print(*locations_lst, sep=',\n', end=';\n')
+            print('\nUNLOCK TABLES;\n')
 
         print('\n-- Dump completed.')
         sys.stdout = STDOUT
