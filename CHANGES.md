@@ -1,8 +1,12 @@
 # CHANGES:
 
+## 1.1.1 (2023-03-19)
+
+- First final release, update 1.1: fixed dump for `SQL`, `SQLite3` and `MySQL/MariaDB`.
+
 ## 1.1.0 (2023-03-12)
 
-- First final release, update 1: fixed output for `SQL` and `SQLite3`, added output for `MySQL/MariaDB`.
+- First final release, update 1.0: fixed dump for `SQL` and `SQLite3`, added dump for `MySQL/MariaDB`.
 
 ## 1.0.0 (2023-03-12)
 
@@ -14,7 +18,7 @@
 
 ## 0.8.0 (2023-03-10)
 
-- Eighth pre-release: refactored and cleaned code (names of vars and functions, others), fixed output for common `SQL` and `SQLite3`, improved docstrings.
+- Eighth pre-release: refactored and cleaned code (names of vars and functions, others), fixed dump for common `SQL` and `SQLite3`, improved docstrings.
 
 ## 0.7.2 (2023-03-08)
 
@@ -22,7 +26,7 @@
 
 ## 0.7.1 (2023-03-07)
 
-- Seventh pre-release: fixed output for `SQL`.
+- Seventh pre-release: fixed dump for `SQL`.
 
 ## 0.7.0 (2023-03-05)
 

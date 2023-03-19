@@ -58,7 +58,7 @@ LOCATIONS: tuple[str, str] = ('Регион', 'Населённый пункт')
     '-f',
     '--filetype',
     type=click.Choice(
-        ['csv', 'xlsx', 'sql', 'sqlite3', 'mariadb'], case_sensitive=False
+        ['csv', 'xlsx', 'sql', 'sqlite3', 'mysql'], case_sensitive=False
     ),
     multiple=True,
     help=(
@@ -101,8 +101,8 @@ def cli(total: int, filetype: tuple[str, ...], data: str, output: str) -> None:
         outputs.to_sql(df, output, PATH_TO_OUTPUT)
     if 'sqlite3' in filetype:
         outputs.to_sqlite3(df, output, PATH_TO_OUTPUT)
-    if 'mariadb' in filetype:
-        outputs.to_mariadb(df, output, PATH_TO_OUTPUT)
+    if 'mysql' in filetype:
+        outputs.to_mysql(df, output, PATH_TO_OUTPUT)
 
     click.echo()
 

@@ -1,6 +1,7 @@
-"""Module for generating output files (CSV, MS Excel, [My]SQL, SQLite)."""
+"""Module for generating output files (CSV, MS Excel, SQL, SQLite, MySQL)."""
 import csv
 import sqlite3
+import sys
 import pandas as pd
 
 from pathlib import Path
@@ -14,6 +15,7 @@ SQL_PERSONS_COLUMNS: list[str] = [
 ]
 SQL_CONTACTS_COLUMNS: list[str] = ['phone', 'email']
 SQL_LOCATIONS_COLUMNS: list[str] = ['region', 'locality']
+STDOUT = sys.stdout
 
 
 def to_csv(df: pd.DataFrame, output: str, path: Path) -> None:
@@ -77,32 +79,32 @@ def to_sql(df: pd.DataFrame, output: str, path: Path) -> None:
     filepath = path.joinpath(filename)
 
     sql_create_persons_table: str = """
-    CREATE TABLE IF NOT EXISTS persons
+    CREATE TABLE IF NOT EXISTS `persons`
     (
-    ID INTEGER NOT NULL PRIMARY KEY,
-    lastname TEXT NOT NULL,
-    firstname TEXT NOT NULL,
-    patronymic TEXT NOT NULL,
-    sex TEXT NOT NULL,
-    date_of_birth DATE NOT NULL
+    `ID` INTEGER NOT NULL PRIMARY KEY,
+    `lastname` TEXT NOT NULL,
+    `firstname` TEXT NOT NULL,
+    `patronymic` TEXT NOT NULL,
+    `sex` TEXT NOT NULL,
+    `date_of_birth` DATE NOT NULL
     );
     """
     sql_create_contacts_table: str = """
-    CREATE TABLE IF NOT EXISTS contacts
+    CREATE TABLE IF NOT EXISTS `contacts`
     (
-    ID INTEGER NOT NULL,
-    phone TEXT NOT NULL,
-    email TEXT NOT NULL,
-    FOREIGN KEY (ID) REFERENCES persons (ID) ON DELETE CASCADE
+    `ID` INTEGER NOT NULL,
+    `phone` TEXT NOT NULL,
+    `email` TEXT NOT NULL,
+    FOREIGN KEY (`ID`) REFERENCES persons (`ID`) ON DELETE CASCADE
     );
     """
     sql_create_locations_table: str = """
-    CREATE TABLE IF NOT EXISTS locations
+    CREATE TABLE IF NOT EXISTS `locations`
     (
-    ID INTEGER NOT NULL,
-    region TEXT NOT NULL,
-    locality TEXT NOT NULL,
-    FOREIGN KEY (ID) REFERENCES persons (ID) ON DELETE CASCADE
+    `ID` INTEGER NOT NULL,
+    `region` TEXT NOT NULL,
+    `locality` TEXT NOT NULL,
+    FOREIGN KEY (`ID`) REFERENCES persons (`ID`) ON DELETE CASCADE
     );
     """
 
@@ -124,47 +126,47 @@ def to_sql(df: pd.DataFrame, output: str, path: Path) -> None:
 
     with open(filepath, 'w') as outfile:
         outfile.write(
-            '--- You have to create database manually and run this file!\n'
+            '-- You have to create database manually and run this file!\n\n'
         )
         outfile.write('BEGIN TRANSACTION;\n')
 
-        outfile.write('\n--- Create table `persons`:\n')
+        outfile.write('\n-- Create table `persons`:\n')
         outfile.write(sql_create_persons_table)
 
         if is_contacts_info:
-            outfile.write('\n--- Create table `contacts`:\n')
+            outfile.write('\n-- Create table `contacts`:\n')
             outfile.write(sql_create_contacts_table)
         if is_contacts_info:
-            outfile.write('\n--- Create table `contacts`:\n')
+            outfile.write('\n-- Create table `contacts`:\n')
             outfile.write(sql_create_locations_table)
 
-        outfile.write('\n--- Insert data into table `persons`:\n')
+        outfile.write('\n-- Dump data for table `persons`:\n')
 
         for row in persons.itertuples():
             ID, lastname, firstname, patronymic, sex, date_of_birth = row
             outfile.write(
-                'INSERT INTO persons VALUES '
+                'INSERT INTO `persons` VALUES '
                 + f'({ID}, "{lastname}", "{firstname}", "{patronymic}", '
                 + f'"{sex}", "{date_of_birth}");\n'
             )
 
         if is_contacts_info:
-            outfile.write('\n--- Insert data into table `contacts`:\n')
+            outfile.write('\n-- Dump data for table `contacts`:\n')
 
             for row in contacts.itertuples():
                 ID, phone, email = row
                 outfile.write(
-                    'INSERT INTO contacts VALUES '
+                    'INSERT INTO `contacts` VALUES '
                     + f'({ID}, "{phone}", "{email}");\n'
                 )
 
         if is_locations_info:
-            outfile.write('\n--- Insert data into table `locations`:\n')
+            outfile.write('\n-- Dump data for table `locations`:\n')
 
             for row in locations.itertuples():
                 ID, region, locality = row
                 outfile.write(
-                    'INSERT INTO locations VALUES '
+                    'INSERT INTO `locations` VALUES '
                     + f'({ID}, "{region}", "{locality}");\n'
                 )
 
@@ -273,7 +275,7 @@ def to_sqlite3(df: pd.DataFrame, output: str, path: Path) -> None:
     con.close()
 
 
-def to_mariadb(df: pd.DataFrame, output: str, path: Path) -> None:
+def to_mysql(df: pd.DataFrame, output: str, path: Path) -> None:
     """Generate a SQL file for MySQL/MariaDB.
 
     Tables: 'persons', 'contacts' and 'locations'.
@@ -288,40 +290,45 @@ def to_mariadb(df: pd.DataFrame, output: str, path: Path) -> None:
     Notes:
         Save pandas DataFrames as a SQL file to import into MySQL/MariaDB.
     """
-    filename = output + '.mariadb'
+    filename = output + '.mysql'
     filepath = path.joinpath(filename)
 
     sql_create_persons_table: str = """
-    DROP TABLE IF EXISTS persons;
-    CREATE TABLE persons
+    DROP TABLE IF EXISTS `persons`;
+    CREATE TABLE `persons`
     (
-    ID SMALLINT NOT NULL PRIMARY KEY,
-    lastname VARCHAR(20) NOT NULL,
-    firstname VARCHAR(20) NOT NULL,
-    patronymic VARCHAR(20) NOT NULL,
-    sex CHAR(4) NOT NULL,
-    date_of_birth DATE NOT NULL
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+    `ID` SMALLINT NOT NULL,
+    `lastname` VARCHAR(20) NOT NULL,
+    `firstname` VARCHAR(20) NOT NULL,
+    `patronymic` VARCHAR(20) NOT NULL,
+    `sex` CHAR(4) NOT NULL,
+    `date_of_birth` DATE NOT NULL,
+    PRIMARY KEY (`ID`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
     """
     sql_create_contacts_table: str = """
-    DROP TABLE IF EXISTS contacts;
-    CREATE TABLE contacts
+    DROP TABLE IF EXISTS `contacts`;
+    CREATE TABLE `contacts`
     (
-    ID SMALLINT NOT NULL,
-    phone CHAR(16) NOT NULL,
-    email VARCHAR(50) NOT NULL,
-    FOREIGN KEY (ID) REFERENCES persons (ID) ON DELETE CASCADE
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+    `ID` SMALLINT NOT NULL,
+    `phone` CHAR(16) NOT NULL,
+    `email` VARCHAR(50) NOT NULL,
+    KEY `ID` (`ID`),
+    CONSTRAINT `contacts_ibfk_1` FOREIGN KEY (`ID`) REFERENCES `persons` (`ID`)
+    ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
     """
     sql_create_locations_table: str = """
-    DROP TABLE IF EXISTS locations;
+    DROP TABLE IF EXISTS `locations`;
     CREATE TABLE locations
     (
-    ID SMALLINT NOT NULL,
-    region VARCHAR(50) NOT NULL,
-    locality VARCHAR(50) NOT NULL,
-    FOREIGN KEY (ID) REFERENCES persons (ID) ON DELETE CASCADE
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+    `ID` SMALLINT NOT NULL,
+    `region` VARCHAR(50) NOT NULL,
+    `locality` VARCHAR(50) NOT NULL,
+    KEY `ID` (`ID`),
+    CONSTRAINT `locations_ibfk_1` FOREIGN KEY (`ID`) REFERENCES `persons` (`ID`)
+    ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
     """
 
     is_contacts_info = 'Телефон' and 'E-mail' in df.columns
@@ -341,57 +348,63 @@ def to_mariadb(df: pd.DataFrame, output: str, path: Path) -> None:
         persons = df
 
     with open(filepath, 'w') as outfile:
-        outfile.write('--- Run this file in MySQL/MariaDB!\n')
-        outfile.write(
-            'CREATE DATABASE faker_persons_ru DEFAULT CHARACTER SET utf8;\n'
-        )
-        outfile.write('USE faker_persons_ru;\n')
+        sys.stdout = outfile
+        print('-- Run this file in MySQL/MariaDB!\n\n')
+        print('CREATE DATABASE IF NOT EXISTS `faker_persons_ru`;\n')
+        print('USE `faker_persons_ru`;\n')
 
-        outfile.write('\n--- Create table `persons`:\n')
-        outfile.write(sql_create_persons_table)
+        print('\n-- Create table `persons`:\n')
+        print(sql_create_persons_table)
 
-        if is_contacts_info:
-            outfile.write('\n--- Create table `contacts`:\n')
-            outfile.write(sql_create_contacts_table)
-        if is_contacts_info:
-            outfile.write('\n--- Create table `contacts`:\n')
-            outfile.write(sql_create_locations_table)
+        print('\n-- Dump data for table `persons`:\n')
+        print('\nLOCK TABLES `persons` WRITE;\n')
+        print('INSERT INTO `persons` VALUES')
 
-        outfile.write('\n--- Insert data into table `persons`:\n')
-        outfile.write('set autocommit=0;\n')
+        persons_lst = []
 
         for row in persons.itertuples():
             ID, lastname, firstname, patronymic, sex, date_of_birth = row
-            outfile.write(
-                'INSERT INTO persons VALUES '
-                + f'({ID}, "{lastname}", "{firstname}", "{patronymic}", '
-                + f'"{sex}", "{date_of_birth}");\n'
+            persons_lst.append(
+                f'({ID}, "{lastname}", "{firstname}", "{patronymic}", '
+                + f'"{sex}", "{date_of_birth}")'
             )
 
-        outfile.write('commit;\n')
+        print(*persons_lst, sep=',\n')
+        print(';\nUNLOCK TABLES;\n')
 
         if is_contacts_info:
-            outfile.write('\n--- Insert data into table `contacts`:\n')
-            outfile.write('set autocommit=0;\n')
+            print('\n-- Create table `contacts`:\n')
+            print(sql_create_contacts_table)
+
+            print('\n-- Dump data for table `contacts`:\n')
+            print('\nLOCK TABLES `contacts` WRITE;\n')
+            print('INSERT INTO `contacts` VALUES ')
+
+            contacts_lst = []
 
             for row in contacts.itertuples():
                 ID, phone, email = row
-                outfile.write(
-                    'INSERT INTO contacts VALUES '
-                    + f'({ID}, "{phone}", "{email}");\n'
-                )
+                contacts_lst.append(f'({ID}, "{phone}", "{email}")')
 
-            outfile.write('commit;\n')
+            print(*contacts_lst, sep=',\n')
+            print(';\nUNLOCK TABLES;\n')
 
         if is_locations_info:
-            outfile.write('\n--- Insert data into table `locations`:\n')
-            outfile.write('set autocommit=0;\n')
+            print('\n-- Create table `locations`:\n')
+            print(sql_create_locations_table)
+
+            print('\n-- Dump data for table `locations`:\n')
+            print('\nLOCK TABLES `locations` WRITE;\n')
+            print('INSERT INTO `locations` VALUES ')
+
+            locations_lst = []
 
             for row in locations.itertuples():
                 ID, region, locality = row
-                outfile.write(
-                    'INSERT INTO locations VALUES '
-                    + f'({ID}, "{region}", "{locality}");\n'
-                )
+                locations_lst.append(f'({ID}, "{region}", "{locality}")')
 
-            outfile.write('commit;')
+            print(*locations_lst, sep=',\n')
+            print(';\nUNLOCK TABLES;\n')
+
+        print('\n-- Dump completed.')
+        sys.stdout = STDOUT
