@@ -58,121 +58,6 @@ def to_excel(df: pd.DataFrame, output: str, path: Path) -> None:
     df.to_excel(filepath, index=False)
 
 
-def to_sql(df: pd.DataFrame, output: str, path: Path) -> None:
-    """Generate a common SQL file.
-
-    Tables: 'persons', 'contacts' and 'locations'.
-
-    Args:
-        df: A dataset (pandas DataFrame) containing fake Russian
-        personal data; each record may include full name, sex, date of birth,
-        cell phone number and email address, region and populated locality.
-        output: A file name without extension (str).
-        path: A path (PosixPath) to user's home directory.
-
-    Notes:
-        Save pandas DataFrames as a common SQL file (may be imported into RDBMS)
-        using generic data types (INTEGER for integers, TEXT for strings, DATE
-        for dates).
-    """
-    filename = output + '.sql'
-    filepath = path.joinpath(filename)
-
-    sql_create_persons_table: str = """
-    CREATE TABLE IF NOT EXISTS `persons`
-    (
-    `ID` INTEGER NOT NULL PRIMARY KEY,
-    `lastname` TEXT NOT NULL,
-    `firstname` TEXT NOT NULL,
-    `patronymic` TEXT NOT NULL,
-    `sex` TEXT NOT NULL,
-    `date_of_birth` DATE NOT NULL
-    );
-    """
-    sql_create_contacts_table: str = """
-    CREATE TABLE IF NOT EXISTS `contacts`
-    (
-    `ID` INTEGER NOT NULL,
-    `phone` TEXT NOT NULL,
-    `email` TEXT NOT NULL,
-    FOREIGN KEY (`ID`) REFERENCES persons (`ID`) ON DELETE CASCADE
-    );
-    """
-    sql_create_locations_table: str = """
-    CREATE TABLE IF NOT EXISTS `locations`
-    (
-    `ID` INTEGER NOT NULL,
-    `region` TEXT NOT NULL,
-    `locality` TEXT NOT NULL,
-    FOREIGN KEY (`ID`) REFERENCES persons (`ID`) ON DELETE CASCADE
-    );
-    """
-
-    is_contacts_info = 'Телефон' and 'E-mail' in df.columns
-    is_locations_info = 'Регион' and 'Населённый пункт' in df.columns
-
-    if is_contacts_info and is_locations_info:
-        persons = df[['Фамилия', 'Имя', 'Отчество', 'Пол', 'Дата рождения']]
-        contacts = df[['Телефон', 'E-mail']]
-        locations = df[['Регион', 'Населённый пункт']]
-    elif is_contacts_info and not is_locations_info:
-        persons = df[['Фамилия', 'Имя', 'Отчество', 'Пол', 'Дата рождения']]
-        contacts = df[['Телефон', 'E-mail']]
-    elif not is_contacts_info and is_locations_info:
-        persons = df[['Фамилия', 'Имя', 'Отчество', 'Пол', 'Дата рождения']]
-        locations = df[['Регион', 'Населённый пункт']]
-    else:
-        persons = df
-
-    with open(filepath, 'w') as outfile:
-        outfile.write(
-            '-- You have to create database manually and run this file!\n\n'
-        )
-        outfile.write('BEGIN TRANSACTION;\n')
-
-        outfile.write('\n-- Create table `persons`:\n')
-        outfile.write(sql_create_persons_table)
-
-        if is_contacts_info:
-            outfile.write('\n-- Create table `contacts`:\n')
-            outfile.write(sql_create_contacts_table)
-        if is_contacts_info:
-            outfile.write('\n-- Create table `contacts`:\n')
-            outfile.write(sql_create_locations_table)
-
-        outfile.write('\n-- Dump data for table `persons`:\n')
-
-        for row in persons.itertuples():
-            ID, lastname, firstname, patronymic, sex, date_of_birth = row
-            outfile.write(
-                'INSERT INTO `persons` VALUES '
-                + f'({ID}, "{lastname}", "{firstname}", "{patronymic}", '
-                + f'"{sex}", "{date_of_birth}");\n'
-            )
-
-        if is_contacts_info:
-            outfile.write('\n-- Dump data for table `contacts`:\n')
-
-            for row in contacts.itertuples():
-                ID, phone, email = row
-                outfile.write(
-                    'INSERT INTO `contacts` VALUES '
-                    + f'({ID}, "{phone}", "{email}");\n'
-                )
-
-        if is_locations_info:
-            outfile.write('\n-- Dump data for table `locations`:\n')
-
-            for row in locations.itertuples():
-                ID, region, locality = row
-                outfile.write(
-                    'INSERT INTO `locations` VALUES '
-                    + f'({ID}, "{region}", "{locality}");\n'
-                )
-
-        outfile.write('\nCOMMIT;')
-
-
 def to_sqlite3(df: pd.DataFrame, output: str, path: Path) -> None:
     """Generate a SQLite3 file.
 
@@ -273,6 +158,133 @@ def to_sqlite3(df: pd.DataFrame, output: str, path: Path) -> None:
         locations.to_sql('locations', con, if_exists='append', index=True)
 
     con.close()
+
+
+def to_sql(df: pd.DataFrame, output: str, path: Path) -> None:
+    """Generate a common SQL file.
+
+    Tables: 'persons', 'contacts' and 'locations'.
+
+    Args:
+        df: A dataset (pandas DataFrame) containing fake Russian
+        personal data; each record may include full name, sex, date of birth,
+        cell phone number and email address, region and populated locality.
+        output: A file name without extension (str).
+        path: A path (PosixPath) to user's home directory.
+
+    Notes:
+        Save pandas DataFrames as a common SQL file (may be imported into RDBMS)
+        using generic data types (INTEGER for integers, TEXT for strings, DATE
+        for dates).
+    """
+    filename = output + '.sql'
+    filepath = path.joinpath(filename)
+
+    sql_create_persons_table: str = """
+    CREATE TABLE IF NOT EXISTS `persons`
+    (
+    `ID` INTEGER NOT NULL PRIMARY KEY,
+    `lastname` TEXT NOT NULL,
+    `firstname` TEXT NOT NULL,
+    `patronymic` TEXT NOT NULL,
+    `sex` TEXT NOT NULL,
+    `date_of_birth` DATE NOT NULL
+    );
+    """
+    sql_create_contacts_table: str = """
+    CREATE TABLE IF NOT EXISTS `contacts`
+    (
+    `ID` INTEGER NOT NULL,
+    `phone` TEXT NOT NULL,
+    `email` TEXT NOT NULL,
+    FOREIGN KEY (`ID`) REFERENCES persons (`ID`) ON DELETE CASCADE
+    );
+    """
+    sql_create_locations_table: str = """
+    CREATE TABLE IF NOT EXISTS `locations`
+    (
+    `ID` INTEGER NOT NULL,
+    `region` TEXT NOT NULL,
+    `locality` TEXT NOT NULL,
+    FOREIGN KEY (`ID`) REFERENCES persons (`ID`) ON DELETE CASCADE
+    );
+    """
+
+    is_contacts_info = 'Телефон' and 'E-mail' in df.columns
+    is_locations_info = 'Регион' and 'Населённый пункт' in df.columns
+
+    if is_contacts_info and is_locations_info:
+        persons = df[['Фамилия', 'Имя', 'Отчество', 'Пол', 'Дата рождения']]
+        contacts = df[['Телефон', 'E-mail']]
+        locations = df[['Регион', 'Населённый пункт']]
+    elif is_contacts_info and not is_locations_info:
+        persons = df[['Фамилия', 'Имя', 'Отчество', 'Пол', 'Дата рождения']]
+        contacts = df[['Телефон', 'E-mail']]
+    elif not is_contacts_info and is_locations_info:
+        persons = df[['Фамилия', 'Имя', 'Отчество', 'Пол', 'Дата рождения']]
+        locations = df[['Регион', 'Населённый пункт']]
+    else:
+        persons = df
+
+    with open(filepath, 'w') as outfile:
+        sys.stdout = outfile
+        print('-- You have to create database manually and run this file!\n\n')
+        print('BEGIN TRANSACTION;\n')
+
+        print('\n-- Create table `persons`:\n')
+        print(sql_create_persons_table)
+
+        if is_contacts_info:
+            print('\n-- Create table `contacts`:\n')
+            print(sql_create_contacts_table)
+        if is_contacts_info:
+            print('\n-- Create table `contacts`:\n')
+            print(sql_create_locations_table)
+
+        print('\n-- Dump data for table `persons`:\n')
+
+        persons_lst = []
+
+        for row in persons.itertuples():
+            ID, lastname, firstname, patronymic, sex, date_of_birth = row
+            persons_lst.append(
+                'INSERT INTO `persons` VALUES '
+                + f'({ID}, "{lastname}", "{firstname}", "{patronymic}", '
+                + f'"{sex}", "{date_of_birth}")'
+            )
+
+        print(*persons_lst, sep=';\n', end=';\n')
+
+        if is_contacts_info:
+            print('\n-- Dump data for table `contacts`:\n')
+
+            contacts_lst = []
+
+            for row in contacts.itertuples():
+                ID, phone, email = row
+                contacts_lst.append(
+                    'INSERT INTO `contacts` VALUES '
+                    + f'({ID}, "{phone}", "{email}")'
+                )
+
+            print(*contacts_lst, sep=';\n', end=';\n')
+
+        if is_locations_info:
+            print('\n-- Dump data for table `locations`:\n')
+
+            locations_lst = []
+
+            for row in locations.itertuples():
+                ID, region, locality = row
+                locations_lst.append(
+                    'INSERT INTO `locations` VALUES '
+                    + f'({ID}, "{region}", "{locality}")'
+                )
+
+            print(*locations_lst, sep=';\n', end=';\n')
+
+        print('\nCOMMIT;')
+        sys.stdout = STDOUT
 
 
 def to_mysql(df: pd.DataFrame, output: str, path: Path) -> None:

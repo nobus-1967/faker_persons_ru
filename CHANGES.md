@@ -1,5 +1,9 @@
 # CHANGES:
 
+## 1.1.2 (2023-03-20)
+
+- First final release, update 1.2: unified dump for `SQL` and `MySQL/MariaDB` using `sys.stdout`.
+
 ## 1.1.1 (2023-03-19)
 
 - First final release, update 1.1: fixed dump for `SQL`, `SQLite3` and `MySQL/MariaDB`.

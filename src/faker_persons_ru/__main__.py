@@ -4,8 +4,8 @@ Main module for:
 - define options through CLI,
 - set type of generating fake Russian personal data,
 - create resulting DataFrames of fake Russian personal data, and
-- save data into different formats (CSV, MS Excel, SQL, SQLite3, MySQL/MariaDB)
-in user's home directory.
+- save data into different formats (CSV, MS Excel, SQLite3, Common SQL,
+MySQL/MariaDB) in user's home directory.
 """
 import click
 import pandas as pd
@@ -58,11 +58,11 @@ LOCATIONS: tuple[str, str] = ('Регион', 'Населённый пункт')
     '-f',
     '--filetype',
     type=click.Choice(
-        ['csv', 'xlsx', 'sql', 'sqlite3', 'mysql'], case_sensitive=False
+        ['csv', 'xlsx', 'sqlite3', 'sql', 'mysql'], case_sensitive=False
     ),
     multiple=True,
     help=(
-        'Type of output file: CSV, MS Excel, Common SQL, SQLite3 DB, '
+        'Type of output file: CSV, MS Excel, SQLite3 DB, Common SQL, '
         + 'SQL for MySQL/MariaDB. '
         + 'Multiply values are accepted!'
     ),
@@ -97,10 +97,10 @@ def cli(total: int, filetype: tuple[str, ...], data: str, output: str) -> None:
         outputs.to_csv(df, output, PATH_TO_OUTPUT)
     if 'xlsx' in filetype:
         outputs.to_excel(df, output, PATH_TO_OUTPUT)
-    if 'sql' in filetype:
-        outputs.to_sql(df, output, PATH_TO_OUTPUT)
     if 'sqlite3' in filetype:
         outputs.to_sqlite3(df, output, PATH_TO_OUTPUT)
+    if 'sql' in filetype:
+        outputs.to_sql(df, output, PATH_TO_OUTPUT)
     if 'mysql' in filetype:
         outputs.to_mysql(df, output, PATH_TO_OUTPUT)
 
