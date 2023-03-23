@@ -9,18 +9,18 @@ from itertools import product
 from faker_persons_ru.modules import demography
 from faker_persons_ru.modules.demography import Age, SEX
 from faker_persons_ru.modules.demography import JUNIOR, MIDDLE, SENIOR
-from faker_persons_ru.modules import birthdays
-from faker_persons_ru.modules import emails
-from faker_persons_ru.modules import phones
+from faker_persons_ru.modules import birthday
+from faker_persons_ru.modules import email
+from faker_persons_ru.modules import phone
 from faker_persons_ru.data import reader
-from faker_persons_ru.data.lastnames_male import LASTNAMES_MALE
-from faker_persons_ru.data.lastnames_female import LASTNAMES_FEMALE
-from faker_persons_ru.data.firstnames_j import FIRSTNAMES_MALE_J
-from faker_persons_ru.data.firstnames_j import FIRSTNAMES_FEMALE_J
-from faker_persons_ru.data.firstnames_m import FIRSNAMES_MALE_M
-from faker_persons_ru.data.firstnames_m import FIRSNAMES_FEMALE_M
-from faker_persons_ru.data.firstnames_s import FIRSNAMES_MALE_S
-from faker_persons_ru.data.firstnames_s import FIRSNAMES_FEMALE_S
+from faker_persons_ru.data.last_names_male import LAST_NAMES_MALE
+from faker_persons_ru.data.last_names_female import LAST_NAMES_FEMALE
+from faker_persons_ru.data.first_names_j import FIRST_NAMES_MALE_J
+from faker_persons_ru.data.first_names_j import FIRST_NAMES_FEMALE_J
+from faker_persons_ru.data.first_names_m import FIRST_NAMES_MALE_M
+from faker_persons_ru.data.first_names_m import FIRST_NAMES_FEMALE_M
+from faker_persons_ru.data.first_names_s import FIRST_NAMES_MALE_S
+from faker_persons_ru.data.first_names_s import FIRST_NAMES_FEMALE_S
 from faker_persons_ru.data.patronymics_j import PATRONYMICS_MALE_J
 from faker_persons_ru.data.patronymics_j import PATRONYMICS_FEMALE_J
 from faker_persons_ru.data.patronymics_m import PATRONYMICS_MALE_M
@@ -43,49 +43,48 @@ def gen_base(total: int) -> list[list[str]]:
 
     demography_lst = product(ages, SEX)
 
-    amounts_total = demography.calc_age_amounts(total)
+    amounts = demography.calc_age_amount(total)
 
-    amounts_lst: list[int] = []
+    amount_lst: list[int] = []
 
     for group in [
-        (amount_total, ages.females)
-        for amount_total, ages in zip(amounts_total, ages)
+        (amount, ages.female_pcent) for amount, ages in zip(amounts, ages)
     ]:
-        amount_total, females_pcent = group
-        amounts_lst += demography.calc_sex_amounts(amount_total, females_pcent)
+        amount, female_pcent = group
+        amount_lst += demography.calc_sex_amount(amount, female_pcent)
 
     # 2. Generate dataset.
     base_dset: list[list[str]] = []
 
     for i, part in enumerate(demography_lst):
         age, sex = part
-        amount = amounts_lst[i]
+        amount = amount_lst[i]
 
-        lastnames = LASTNAMES_MALE if (sex == 'муж.') else LASTNAMES_FEMALE
+        last_names = LAST_NAMES_MALE if (sex == 'муж.') else LAST_NAMES_FEMALE
         if age.group == 'J':
-            firstnames = (
-                FIRSTNAMES_MALE_J if (sex == 'муж.') else FIRSTNAMES_FEMALE_J
+            first_names = (
+                FIRST_NAMES_MALE_J if (sex == 'муж.') else FIRST_NAMES_FEMALE_J
             )
             patronymics = (
                 PATRONYMICS_MALE_J if (sex == 'муж.') else PATRONYMICS_FEMALE_J
             )
         if age.group == 'M':
-            firstnames = (
-                FIRSNAMES_MALE_M if (sex == 'муж.') else FIRSNAMES_FEMALE_M
+            first_names = (
+                FIRST_NAMES_MALE_M if (sex == 'муж.') else FIRST_NAMES_FEMALE_M
             )
             patronymics = (
                 PATRONYMICS_MALE_M if (sex == 'муж.') else PATRONYMICS_FEMALE_M
             )
         if age.group == 'S':
-            firstnames = (
-                FIRSNAMES_MALE_S if (sex == 'муж.') else FIRSNAMES_FEMALE_S
+            first_names = (
+                FIRST_NAMES_MALE_S if (sex == 'муж.') else FIRST_NAMES_FEMALE_S
             )
             patronymics = (
                 PATRONYMICS_MALE_S if (sex == 'муж.') else PATRONYMICS_FEMALE_S
             )
 
-        dset = gen_persons(
-            age, sex, amount, lastnames, firstnames, patronymics
+        dset = gen_person(
+            age, sex, amount, last_names, first_names, patronymics
         )
 
         base_dset.extend(dset)
@@ -95,12 +94,12 @@ def gen_base(total: int) -> list[list[str]]:
     return base_dset
 
 
-def gen_persons(
+def gen_person(
     age: Age,
     sex: str,
     amount: int,
-    lastnames: dict[str, float],
-    firstnames: dict[str, float],
+    last_names: dict[str, float],
+    first_names: dict[str, float],
     patronymics: dict[str, float],
 ) -> list[list[str]]:
     """Generate fake Russian data (name, sex, date of birth).
@@ -109,9 +108,9 @@ def gen_persons(
         age: An object of dataclass 'Age' for a certain age.
         sex: A value(str) from namedtuple 'Sex'.
         amount: An amount (int) of male/female persons of a certain age.
-        lastnames: A Russian last names (dict) mapping names(keys, str) and
+        last_names: A Russian last names (dict) mapping names(keys, str) and
         their weights (values, float).
-        firstnames: A Russian last names (dict) mapping names(keys, str) and
+        first_names: A Russian last names (dict) mapping names(keys, str) and
         their weights (values, float).
         patronymics: A Russian last names (dict) mapping names(keys, str) and
         their weights (values, float).
@@ -120,36 +119,36 @@ def gen_persons(
         A list (of lists of str) containing fake Russan personal data (name,
         sex, date of birth) of a certain sex and age.
     """
-    persons_lst: list[list[str]] = []
-    birthdays_dq = deque(birthdays.gen_birthdays(age, amount))
+    person_lst: list[list[str]] = []
+    birthday_dq = deque(birthday.gen_birthday(age, amount))
 
-    lastnames_dq = deque(reader.read_names(amount, lastnames))
-    firstnames_dq = deque(reader.read_names(amount, firstnames))
-    patronymics_dq = deque(reader.read_names(amount, patronymics))
+    last_names_dq = deque(reader.read_name(amount, last_names))
+    first_names_dq = deque(reader.read_name(amount, first_names))
+    patronymics_dq = deque(reader.read_name(amount, patronymics))
 
     for i in range(amount):
-        birthday = birthdays_dq.popleft()
+        date_of_birth = birthday_dq.popleft()
 
         person = [
-            lastnames_dq.popleft(),
-            firstnames_dq.popleft(),
+            last_names_dq.popleft(),
+            first_names_dq.popleft(),
             patronymics_dq.popleft(),
             sex,
-            birthday,
+            date_of_birth,
         ]
 
-        if birthdays_dq.count(birthday) > 0:
-            while persons_lst.count(person) > 0:
-                birthdays_dq.append(person.pop())
-                birthday_new = birthdays_dq.popleft()
-                person.append(birthday_new)
+        if birthday_dq.count(date_of_birth) > 0:
+            while person_lst.count(person) > 0:
+                birthday_dq.append(person.pop())
+                date_of_birth_new = birthday_dq.popleft()
+                person.append(date_of_birth_new)
 
-        persons_lst.append(person)
+        person_lst.append(person)
 
-    return persons_lst
+    return person_lst
 
 
-def gen_contacts(total: int, base_dset: list[list[str]]) -> zip:
+def gen_contact(total: int, base_dset: list[list[str]]) -> zip:
     """Generate a dataset of fake Russian contacts (cell phone numbers, emails).
 
     Args:
@@ -161,15 +160,15 @@ def gen_contacts(total: int, base_dset: list[list[str]]) -> zip:
         A zipped tupple aggregating lists (of str) with fake Russian phones
         and emails.
     """
-    phones_lst = phones.gen_phones(total)
-    emails_lst = emails.gen_emails(base_dset)
+    phone_lst = phone.gen_phone(total)
+    email_lst = email.gen_email(base_dset)
 
-    contacts_dset = zip(phones_lst, emails_lst)
+    contact_dset = zip(phone_lst, email_lst)
 
-    return contacts_dset
+    return contact_dset
 
 
-def gen_locations(
+def gen_location(
     total: int, localities_dict: dict[str, tuple[str, float]]
 ) -> zip:
     """Generate dataset of Russian locations (region and populated locality.
@@ -183,15 +182,15 @@ def gen_locations(
         A zipped tuple aggregating lists (of str) with Russian regions and
         populated localities.
     """
-    regions_lst: list[str] = []
-    localities_lst: list[str] = []
+    region_lst: list[str] = []
+    locality_lst: list[str] = []
 
-    locations_lst = reader.read_locations(total, localities_dict)
+    location_lst = reader.read_location(total, localities_dict)
 
-    for location in locations_lst:
-        regions_lst.append(location[0])
-        localities_lst.append(location[1])
+    for location in location_lst:
+        region_lst.append(location[0])
+        locality_lst.append(location[1])
 
-    locations_dset = zip(regions_lst, localities_lst)
+    location_dset = zip(region_lst, locality_lst)
 
-    return locations_dset
+    return location_dset

@@ -5,7 +5,7 @@ import random
 from faker_persons_ru.modules.demography import Age
 
 
-def gen_birthdays(age: Age, amount: int) -> list[str]:
+def gen_birthday(age: Age, amount: int) -> list[str]:
     """Generate random birthdays for a certain age.
 
     Args:
@@ -20,14 +20,14 @@ def gen_birthdays(age: Age, amount: int) -> list[str]:
     date_end = datetime.datetime(age.year_end, 12, 31)
     date_delta = datetime.timedelta(days=1)
 
-    dates_lst: list[str] = []
-    birthdays_lst: list[str] = []
+    date_lst: list[str] = []
+    birthday_lst: list[str] = []
     date = date_start
 
     while date <= date_end:
-        dates_lst.append(date.strftime('%Y-%m-%d'))
+        date_lst.append(date.strftime('%Y-%m-%d'))
         date += date_delta
 
-    birthdays_lst = random.choices(dates_lst, k=amount)
+    birthday_lst = random.choices(date_lst, k=amount)
 
-    return birthdays_lst
+    return birthday_lst

@@ -14,10 +14,10 @@ class Age:
     proportion: float
     year_start: int
     year_end: int
-    females: float
+    female_pcent: float
 
 
-def calc_age_amounts(total: int) -> tuple[int, int, int]:
+def calc_age_amount(total: int) -> tuple[int, int, int]:
     """Calculate amounts of persons of each age.
 
     Args:
@@ -46,29 +46,29 @@ def calc_age_amounts(total: int) -> tuple[int, int, int]:
     return total_j, total_m, total_s
 
 
-def calc_sex_amounts(age_amount: int, females_pcent: float) -> tuple[int, int]:
+def calc_sex_amount(age_amount: int, female_pcent: float) -> tuple[int, int]:
     """Calculate total persons of each sex.
 
     Args:
         age_amount: An amount (int) of persons of a certain age.
-        females_pcent: A percent (float) of female persons in the ages.
+        female_pcent: A percent (float) of female persons in the ages.
 
     Returns:
         A tuple (of int) representing amounts of male/female persons.
     """
-    males, females = 0, 0
+    male_amount, female_amount = 0, 0
 
     if age_amount == 1:
-        males += 1 if females_pcent < 0.5 else 0
-        females += 1 if females_pcent > 0.5 else 0
+        male_amount += 1 if female_pcent < 0.5 else 0
+        female_amount += 1 if female_pcent > 0.5 else 0
     elif age_amount == 2:
-        males += 1
-        females += 1
+        male_amount += 1
+        female_amount += 1
     elif age_amount > 2:
-        females += int(age_amount * females_pcent)
-        males += age_amount - females
+        female_amount += int(age_amount * female_pcent)
+        male_amount += age_amount - female_amount
 
-    return males, females
+    return male_amount, female_amount
 
 
 JUNIOR = Age('J', 0.27, 1990, 2004, 0.49)

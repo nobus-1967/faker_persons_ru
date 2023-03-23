@@ -1,5 +1,9 @@
 # CHANGES:
 
+## 1.1.2 (2023-03-23)
+
+- First final release, update 2.0: refactored names of vars, modules and data tables (i.e. `lastname` to `last_name`, `outputs` to `output`, `persons` to `person`; plural was retained only for original dictionaries and lists of names/locations, `datasets` and `outputs` modules), fixed some typos.
+
 ## 1.1.2 (2023-03-20)
 
 - First final release, update 1.2: unified dump for `SQL` and `MySQL/MariaDB` using `sys.stdout`.

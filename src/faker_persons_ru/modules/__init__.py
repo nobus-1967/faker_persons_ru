@@ -1,9 +1,9 @@
 # faker_persons_ru
 __all__ = [
-    'birthdays',
+    'birthday',
     'datasets',
     'demography',
-    'emails',
+    'email',
     'outputs',
-    'phones',
+    'phone',
 ]

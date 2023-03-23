@@ -2,7 +2,7 @@
 import random
 
 
-def read_names(total: int, names_dict: dict[str, float]) -> list[str]:
+def read_name(total: int, names_dict: dict[str, float]) -> list[str]:
     """Create lists of Russian first names, last names and patronymics.
 
     Args:
@@ -17,14 +17,14 @@ def read_names(total: int, names_dict: dict[str, float]) -> list[str]:
     names_from_dict = list(names_dict.keys())
     weights_from_dict = list(names_dict.values())
 
-    names_lst = random.choices(
+    name_lst = random.choices(
         names_from_dict, weights=weights_from_dict, k=total
     )
 
-    return names_lst
+    return name_lst
 
 
-def read_locations(
+def read_location(
     total: int, localities_dict: dict[str, tuple[str, float]]
 ) -> list[tuple[str, str]]:
     """Create lists of Russian piopulated localities with regions.
@@ -43,8 +43,8 @@ def read_locations(
     weights_from_dict = [value[1] for value in localities_dict.values()]
     locations_lst = list(zip(regions_from_dict, localities_from_dict))
 
-    localities_lst = random.choices(
+    locality_lst = random.choices(
         locations_lst, weights=weights_from_dict, k=total
     )
 
-    return localities_lst
+    return locality_lst

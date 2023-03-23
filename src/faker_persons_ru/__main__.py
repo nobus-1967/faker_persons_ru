@@ -44,13 +44,13 @@ LOCATIONS: tuple[str, str] = ('Регион', 'Населённый пункт')
     '-d',
     '--data',
     type=click.Choice(
-        ['base', 'contacts', 'locations', 'full'], case_sensitive=False
+        ['base', 'contact', 'location', 'full'], case_sensitive=False
     ),
     multiple=False,
     help=(
         'Generated data: "base" as default (full name, sex, date of birth), '
-        + '"contacts" ("base" + cell phone number and email address), '
-        + '"locations" ("base" + region and locality) or "full". '
+        + '"contact" ("base" + cell phone number and email address), '
+        + '"location" ("base" + region and locality) or "full". '
         + 'Only one value is accepted!'
     ),
 )
@@ -137,34 +137,34 @@ def gen_data(total: int, data: str) -> pd.DataFrame:
     indeces: pd.RangeIndex = pd.RangeIndex(start=1, stop=total + 1, name='ID')
     base_df = pd.DataFrame(base_dset, columns=PERSONS, index=indeces)
 
-    if data == 'contacts':
-        contacts_dset = datasets.gen_contacts(total, base_dset)
-        contacts_df = pd.DataFrame(
-            contacts_dset, columns=CONTACTS, index=indeces
+    if data == 'contact':
+        contact_dset = datasets.gen_contact(total, base_dset)
+        contact_df = pd.DataFrame(
+            contact_dset, columns=CONTACTS, index=indeces
         )
-        base_plus_contacts_df = base_df.join(contacts_df)
+        base_plus_contact_df = base_df.join(contact_df)
 
-        return base_plus_contacts_df
-    elif data == 'locations':
-        locations_dset = datasets.gen_locations(total, LOCALITIES)
-        locations_df = pd.DataFrame(
-            locations_dset, columns=LOCATIONS, index=indeces
+        return base_plus_contact_df
+    elif data == 'location':
+        location_dset = datasets.gen_location(total, LOCALITIES)
+        location_df = pd.DataFrame(
+            location_dset, columns=LOCATIONS, index=indeces
         )
-        base_plus_locations_df = base_df.join(locations_df)
+        base_plus_location_df = base_df.join(location_df)
 
-        return base_plus_locations_df
+        return base_plus_location_df
     elif data == 'full':
-        contacts_dset = datasets.gen_contacts(total, base_dset)
-        contacts_df = pd.DataFrame(
-            contacts_dset, columns=CONTACTS, index=indeces
+        contact_dset = datasets.gen_contact(total, base_dset)
+        contact_df = pd.DataFrame(
+            contact_dset, columns=CONTACTS, index=indeces
         )
 
-        locations_dset = datasets.gen_locations(total, LOCALITIES)
-        locations_df = pd.DataFrame(
-            locations_dset, columns=LOCATIONS, index=indeces
+        location_dset = datasets.gen_location(total, LOCALITIES)
+        location_df = pd.DataFrame(
+            location_dset, columns=LOCATIONS, index=indeces
         )
 
-        full_df = base_df.join([contacts_df, locations_df])
+        full_df = base_df.join([contact_df, location_df])
 
         return full_df
     else:
