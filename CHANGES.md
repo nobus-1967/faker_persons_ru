@@ -1,5 +1,9 @@
 # CHANGES:
 
+## 1.2.1 (2023-04-12)
+
+- First final release, update 2.1: fixed typo in package's version.
+
 ## 1.2.0 (2023-03-23)
 
 - First final release, update 2.0: refactored names of vars, modules and data tables (i.e. `lastname` to `last_name`, `outputs` to `output`, `persons` to `person`; plural was retained only for original dictionaries and lists of names/locations, `datasets` and `outputs` modules), fixed some typos.
