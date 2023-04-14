@@ -1,5 +1,9 @@
 # CHANGES:
 
+## 1.3.0 (2023-04-12)
+
+- First final release, update 3.0: optimized datasets generation (using `dict`).
+
 ## 1.2.1 (2023-04-12)
 
 - First final release, update 2.1: fixed typo in package's version.

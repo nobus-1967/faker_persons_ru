@@ -120,6 +120,7 @@ def gen_person(
         sex, date of birth) of a certain sex and age.
     """
     person_lst: list[list[str]] = []
+    person_dict: dict[str, list[str]] = {}
     birthday_dq = deque(birthday.gen_birthday(age, amount))
 
     last_names_dq = deque(reader.read_name(amount, last_names))
@@ -127,23 +128,29 @@ def gen_person(
     patronymics_dq = deque(reader.read_name(amount, patronymics))
 
     for i in range(amount):
+        last_name = last_names_dq.popleft()
+        first_name = first_names_dq.popleft()
+        patronymic = patronymics_dq.popleft()
         date_of_birth = birthday_dq.popleft()
 
-        person = [
-            last_names_dq.popleft(),
-            first_names_dq.popleft(),
-            patronymics_dq.popleft(),
+        person_key = f'{last_name} {first_name} {patronymic}, {date_of_birth}'
+
+        while person_key in person_dict:
+            birthday_dq.append(date_of_birth)
+            date_of_birth = birthday_dq.popleft()
+            person_key = (
+                f'{last_name} {first_name} {patronymic}, {date_of_birth}'
+            )
+
+        person_dict[person_key] = [
+            last_name,
+            first_name,
+            patronymic,
             sex,
             date_of_birth,
         ]
 
-        if birthday_dq.count(date_of_birth) > 0:
-            while person_lst.count(person) > 0:
-                birthday_dq.append(person.pop())
-                date_of_birth_new = birthday_dq.popleft()
-                person.append(date_of_birth_new)
-
-        person_lst.append(person)
+    person_lst = list(person_dict.values())
 
     return person_lst
 

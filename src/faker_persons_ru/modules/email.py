@@ -120,6 +120,7 @@ def gen_email(base_dset: list[list[str]]) -> list[str]:
         Russian names and--if necessary--years of birth.
     """
     email_lst: list[str] = []
+    email_dict: dict[str, str] = {}
 
     for i, row in enumerate(base_dset):
         last_name = row[0]
@@ -129,11 +130,13 @@ def gen_email(base_dset: list[list[str]]) -> list[str]:
 
         email = gen_login(last_name, first_name, year, var)
 
-        while email in email_lst:
+        while email in email_dict:
             var += 1
             email = gen_login(last_name, first_name, year, var)
 
-        email_lst.append(email)
+        email_dict[email] = email
+
+    email_lst = list(email_dict.values())
 
     return email_lst
 
