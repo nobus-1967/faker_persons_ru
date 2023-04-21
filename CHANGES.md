@@ -1,5 +1,9 @@
 # CHANGES:
 
+## 1.3.1 (2023-04-21)
+
+- First final release, update 3.1: refactored datasets generation (using `tuple` with `dict`).
+
 ## 1.3.0 (2023-04-12)
 
 - First final release, update 3.0: optimized datasets generation (using `dict`).
